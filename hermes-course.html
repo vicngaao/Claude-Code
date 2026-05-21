@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hermes Agent Course — AI Fire</title>
+  <meta name="description" content="Learn to build Hermes-style AI agents step by step for automation, research, content creation, and business workflows. A hands-on course for founders, creators, and marketers." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet" />
+  <style>
+
+    /* ─── Design tokens — Superhuman system + AI Fire orange ───── */
+    :root {
+      /* Three-canvas polarity */
+      --hero-canvas:   #1b1938;
+      --hero-deep:     #0e0c1f;
+      --on-hero:       #ffffff;
+      --teal-canvas:   #0e3030;
+      --teal-mid:      #155555;
+
+      /* Body surfaces */
+      --canvas:        #ffffff;
+      --canvas-soft:   #fafaf8;
+
+      /* Text */
+      --ink:           #292827;
+      --ink-mute:      #73706d;
+      --ink-faint:     #9a9794;
+
+      /* Borders */
+      --hairline:      #e8e4dd;
+      --hairline-dark: #3f3a52;
+      --on-dark-mute:  #bcbac9;
+      --on-dark-faint: #5a5772;
+
+      /* Brand accent — AI Fire orange */
+      --fire:          #f97316;
+      --fire-deep:     #ea580c;
+      --fire-hover:    #c2410c;
+      --on-fire:       #ffffff;
+      --fire-soft:     rgba(249,115,22,0.12);
+
+      /* Atmospheric tints */
+      --violet-soft:   #c9b4fa;
+
+      /* Shadows */
+      --shadow-1: 0 1px 3px rgba(0,0,0,0.08);
+      --shadow-2: 0 8px 24px rgba(0,0,0,0.12);
+      --shadow-3: 0 16px 48px rgba(0,0,0,0.18);
+
+      --font: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+      --r-xs:   4px;
+      --r-sm:   6px;
+      --r-md:   8px;
+      --r-lg:   12px;
+      --r-xl:   16px;
+      --r-full: 9999px;
+
+      --sp-xxs:  2px;
+      --sp-xs:   4px;
+      --sp-sm:   8px;
+      --sp-md:   12px;
+      --sp-lg:   16px;
+      --sp-xl:   24px;
+      --sp-xxl:  32px;
+      --sp-huge: 64px;
+
+      --max-w: 1100px;
+    }
+
+    /* ─── Reset & base ──────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+    body {
+      background: var(--canvas);
+      color: var(--ink);
+      font-family: var(--font);
+      font-size: 16px;
+      font-weight: 460;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+    ul, ol { list-style: none; }
+
+    /* ─── Layout helpers ────────────────────────────────────────── */
+    .container {
+      width: 100%;
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 var(--sp-xl);
+    }
+    .section { padding: 96px 0; }
+
+    /* ─── Eyebrow ───────────────────────────────────────────────── */
+    .eyebrow {
+      font-size: 12px;
+      font-weight: 540;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: var(--sp-md);
+      color: var(--ink-faint);
+    }
+    .eyebrow--light { color: var(--on-dark-faint); }
+    .eyebrow--orange { color: var(--fire); }
+
+    /* ─── Buttons ───────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--sp-sm);
+      font-family: var(--font);
+      font-weight: 700;
+      font-size: 16px;
+      line-height: 1;
+      border: 1px solid transparent;
+      cursor: pointer;
+      white-space: nowrap;
+      text-decoration: none;
+      transition: background 0.14s, border-color 0.14s, opacity 0.14s, transform 0.12s;
+    }
+    .btn--pill   { padding: 14px 28px; border-radius: var(--r-full); }
+    .btn--rect   { padding: 12px 20px; border-radius: var(--r-md); }
+    .btn--nav    { padding: 7px 14px; border-radius: var(--r-md); font-size: 14px; font-weight: 600; }
+    .btn--full   { width: 100%; justify-content: center; }
+    .btn--primary {
+      background: var(--fire);
+      color: var(--on-fire);
+      border-color: var(--fire);
+    }
+    .btn--primary:hover {
+      background: var(--fire-deep);
+      border-color: var(--fire-deep);
+      transform: translateY(-1px);
+    }
+    .btn--secondary {
+      background: var(--canvas);
+      color: var(--ink);
+      border-color: var(--hairline-dark);
+    }
+    .btn--secondary:hover { border-color: var(--ink-mute); }
+    .btn--ghost-dark {
+      background: transparent;
+      color: var(--on-hero);
+      border-color: rgba(255,255,255,0.30);
+    }
+    .btn--ghost-dark:hover { border-color: rgba(255,255,255,0.60); }
+    .btn--on-teal {
+      background: var(--canvas);
+      color: var(--teal-canvas);
+      border-color: var(--canvas);
+    }
+    .btn--on-teal:hover { opacity: 0.92; }
+
+    /* ─── NAV ───────────────────────────────────────────────────── */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: 64px;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--hairline);
+      display: flex;
+      align-items: center;
+    }
+    .nav__inner {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 var(--sp-xl);
+    }
+    .nav__logo {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--ink);
+      letter-spacing: -0.3px;
+      flex-shrink: 0;
+    }
+    .nav__logo-flame { font-size: 17px; line-height: 1; }
+    .nav__links {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      margin-left: auto;
+    }
+    .nav__links a {
+      font-size: 14px;
+      font-weight: 460;
+      color: var(--ink-mute);
+      padding: 6px var(--sp-md);
+      border-radius: var(--r-full);
+      transition: color 0.12s, background 0.12s;
+    }
+    .nav__links a:hover { color: var(--ink); background: var(--canvas-soft); }
+    .nav__actions {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-sm);
+      margin-left: var(--sp-xl);
+      flex-shrink: 0;
+    }
+
+    /* ─── HERO ──────────────────────────────────────────────────── */
+    .hero {
+      position: relative;
+      background: var(--hero-canvas);
+      padding: 100px 0 96px;
+      overflow: hidden;
+      text-align: center;
+    }
+    /* Atmospheric backdrop — violet-sky + orange fire glow */
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 55% at 15% 45%, rgba(249,115,22,0.14) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 45% at 82% 18%, rgba(201,180,250,0.14) 0%, transparent 58%),
+        radial-gradient(ellipse 55% 50% at 80% 80%, rgba(80,120,255,0.10) 0%, transparent 60%),
+        radial-gradient(ellipse 70% 40% at 50% 105%, rgba(249,115,22,0.10) 0%, transparent 55%),
+        radial-gradient(ellipse 40% 35% at 50% 0%,  rgba(201,180,250,0.08) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .hero__inner {
+      position: relative;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+    .hero__badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--sp-sm);
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: var(--r-full);
+      padding: 6px 16px;
+      font-size: 13px;
+      font-weight: 460;
+      color: var(--on-dark-mute);
+      margin-bottom: 44px;
+    }
+    .hero__badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--fire);
+      flex-shrink: 0;
+    }
+
+    /* Big HERMES word — the editorial centerpiece */
+    .hero__word {
+      display: block;
+      font-size: clamp(88px, 15vw, 168px);
+      font-weight: 800;
+      line-height: 0.88;
+      letter-spacing: -6px;
+      background: linear-gradient(135deg, #fbbf24 0%, #f97316 50%, #ea580c 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 18px;
+    }
+    .hero__wordmark-sub {
+      display: block;
+      font-size: clamp(22px, 3.5vw, 42px);
+      font-weight: 460;
+      line-height: 1.1;
+      letter-spacing: -1.2px;
+      color: var(--on-dark-mute);
+      margin-bottom: var(--sp-xxl);
+    }
+    .hero__sub {
+      font-size: 18px;
+      font-weight: 460;
+      color: var(--on-dark-mute);
+      line-height: 1.65;
+      max-width: 560px;
+      margin: 0 auto var(--sp-xxl);
+    }
+    .hero__actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--sp-md);
+      flex-wrap: wrap;
+    }
+    .hero__note {
+      margin-top: var(--sp-lg);
+      font-size: 13px;
+      font-weight: 460;
+      color: var(--on-dark-faint);
+    }
+
+    /* ─── SOCIAL PROOF BAR ──────────────────────────────────────── */
+    .proof {
+      background: var(--canvas);
+      border-top: 1px solid var(--hairline);
+      border-bottom: 1px solid var(--hairline);
+      padding: var(--sp-lg) 0;
+    }
+    .proof__inner {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-xl);
+      flex-wrap: wrap;
+    }
+    .proof__label {
+      font-size: 13px;
+      font-weight: 460;
+      color: var(--ink-faint);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .proof__divider {
+      width: 1px;
+      height: 20px;
+      background: var(--hairline);
+      flex-shrink: 0;
+    }
+    .proof__companies {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-xl);
+      flex-wrap: wrap;
+    }
+    .proof__company {
+      font-size: 14px;
+      font-weight: 540;
+      color: var(--ink-faint);
+      letter-spacing: -0.2px;
+      transition: color 0.12s;
+    }
+    .proof__company:hover { color: var(--ink-mute); }
+
+    /* ─── FEATURES ──────────────────────────────────────────────── */
+    .features { background: var(--canvas-soft); }
+    .features__header { text-align: center; margin-bottom: 64px; }
+    .features__title {
+      font-size: 48px;
+      font-weight: 540;
+      line-height: 0.96;
+      letter-spacing: -1.32px;
+      color: var(--ink);
+      margin-bottom: var(--sp-lg);
+    }
+    .features__lead {
+      font-size: 18px;
+      font-weight: 460;
+      color: var(--ink-mute);
+      line-height: 1.6;
+      max-width: 540px;
+      margin: 0 auto;
+    }
+    .features__grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--sp-xl);
+    }
+    .feature-card {
+      background: var(--canvas);
+      border: 1px solid var(--hairline);
+      border-radius: var(--r-lg);
+      padding: var(--sp-xxl);
+      box-shadow: var(--shadow-1);
+      transition: box-shadow 0.18s, transform 0.18s;
+    }
+    .feature-card:hover { box-shadow: var(--shadow-2); transform: translateY(-2px); }
+    .feature-card__icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--r-md);
+      background: var(--fire-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin-bottom: var(--sp-lg);
+    }
+    .feature-card__title {
+      font-size: 18px;
+      font-weight: 540;
+      line-height: 1.2;
+      letter-spacing: -0.3px;
+      color: var(--ink);
+      margin-bottom: var(--sp-sm);
+    }
+    .feature-card__body {
+      font-size: 15px;
+      font-weight: 460;
+      color: var(--ink-mute);
+      line-height: 1.65;
+    }
+
+    /* ─── HOW IT WORKS / STEPS ──────────────────────────────────── */
+    .steps { background: var(--canvas); }
+    .steps__header { text-align: center; margin-bottom: 64px; }
+    .steps__title {
+      font-size: 48px;
+      font-weight: 540;
+      line-height: 0.96;
+      letter-spacing: -1.32px;
+      color: var(--ink);
+      margin-bottom: var(--sp-lg);
+    }
+    .steps__grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--sp-xxl);
+      position: relative;
+    }
+    .steps__grid::before {
+      content: '';
+      position: absolute;
+      top: 22px;
+      left: calc(12.5%);
+      right: calc(12.5%);
+      height: 1px;
+      background: var(--hairline);
+      z-index: 0;
+    }
+    .step { text-align: center; position: relative; z-index: 1; }
+    .step__num {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--fire);
+      color: var(--on-fire);
+      font-size: 16px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto var(--sp-lg);
+    }
+    .step__title {
+      font-size: 16px;
+      font-weight: 540;
+      color: var(--ink);
+      margin-bottom: var(--sp-sm);
+      letter-spacing: -0.2px;
+    }
+    .step__body {
+      font-size: 14px;
+      font-weight: 460;
+      color: var(--ink-mute);
+      line-height: 1.65;
+    }
+
+    /* ─── CURRICULUM ────────────────────────────────────────────── */
+    .curriculum { background: var(--canvas-soft); }
+    .curriculum__header { text-align: center; margin-bottom: 64px; }
+    .curriculum__title {
+      font-size: 48px;
+      font-weight: 540;
+      line-height: 0.96;
+      letter-spacing: -1.32px;
+      color: var(--ink);
+      margin-bottom: var(--sp-lg);
+    }
+    .curriculum__lead {
+      font-size: 18px;
+      font-weight: 460;
+      color: var(--ink-mute);
+      line-height: 1.6;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    .curriculum__grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--sp-lg);
+    }
+    .module-card {
+      background: var(--canvas);
+      border: 1px solid var(--hairline);
+      border-radius: var(--r-lg);
+      padding: var(--sp-xxl);
+      display: flex;
+      gap: var(--sp-lg);
+      align-items: flex-start;
+      transition: box-shadow 0.18s, transform 0.18s;
+    }
+    .module-card:hover { box-shadow: var(--shadow-2); transform: translateY(-2px); }
+    .module-card__num {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--fire);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      flex-shrink: 0;
+      padding-top: 3px;
+      min-width: 24px;
+    }
+    .module-card__title {
+      font-size: 17px;
+      font-weight: 540;
+      color: var(--ink);
+      margin-bottom: var(--sp-xs);
+      letter-spacing: -0.25px;
+    }
+    .module-card__desc {
+      font-size: 14px;
+      font-weight: 460;
+      color: var(--ink-mute);
+      line-height: 1.65;
+    }
+
+    /* ─── INSTRUCTOR ────────────────────────────────────────────── */
+    .instructor { background: var(--canvas); }
+    .instructor__inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 96px;
+      align-items: center;
+      max-width: 880px;
+      margin: 0 auto;
+    }
+    .instructor__label {
+      font-size: 12px;
+      font-weight: 540;
+      color: var(--fire);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: var(--sp-lg);
+    }
+    .instructor__name {
+      font-size: 36px;
+      font-weight: 540;
+      line-height: 1.1;
+      letter-spacing: -0.8px;
+      color: var(--ink);
+      margin-bottom: var(--sp-lg);
+    }
+    .instructor__bio {
+      font-size: 16px;
+      font-weight: 460;
+      color: var(--ink-mute);
+      line-height: 1.75;
+      margin-bottom: var(--sp-lg);
+    }
+    .instructor__card {
+      background: var(--canvas-soft);
+      border: 1px solid var(--hairline);
+      border-radius: var(--r-xl);
+      padding: 48px;
+      text-align: center;
+    }
+    .instructor__avatar {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #fbbf24 0%, #f97316 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 44px;
+      margin: 0 auto var(--sp-lg);
+    }
+    .instructor__card-name {
+      font-size: 20px;
+      font-weight: 540;
+      color: var(--ink);
+      letter-spacing: -0.4px;
+      margin-bottom: var(--sp-xs);
+    }
+    .instructor__card-role {
+      font-size: 14px;
+      font-weight: 460;
+      color: var(--ink-mute);
+      line-height: 1.5;
+    }
+
+    /* ─── TESTIMONIALS ──────────────────────────────────────────── */
+    .testimonials { background: var(--canvas-soft); }
+    .testimonials__header { text-align: center; margin-bottom: 64px; }
+    .testimonials__title {
+      font-size: 48px;
+      font-weight: 540;
+      line-height: 0.96;
+      letter-spacing: -1.32px;
+      color: var(--ink);
+    }
+    .testimonials__grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--sp-xl);
+    }
+    .testimonial-card {
+      background: var(--canvas);
+      border: 1px solid var(--hairline);
+      border-radius: var(--r-lg);
+      padding: var(--sp-xxl);
+      box-shadow: var(--shadow-1);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-lg);
+    }
+    .testimonial-card__stars {
+      color: var(--fire);
+      font-size: 14px;
+      letter-spacing: 2px;
+    }
+    .testimonial-card__quote {
+      font-size: 16px;
+      font-weight: 460;
+      color: var(--ink);
+      line-height: 1.7;
+      font-style: italic;
+      flex: 1;
+    }
+    .testimonial-card__author {
+      font-size: 14px;
+      font-weight: 540;
+      color: var(--ink-mute);
+    }
+
+    /* ─── PRICING ───────────────────────────────────────────────── */
+    .pricing { background: var(--canvas); }
+    .pricing__header { text-align: center; margin-bottom: 64px; }
+    .pricing__title {
+      font-size: 48px;
+      font-weight: 540;
+      line-height: 0.96;
+      letter-spacing: -1.32px;
+      color: var(--ink);
+      margin-bottom: var(--sp-lg);
+    }
+    .pricing__lead {
+      font-size: 18px;
+      font-weight: 460;
+      color: var(--ink-mute);
+      line-height: 1.6;
+    }
+    .pricing__grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--sp-xl);
+      align-items: start;
+    }
+    .pricing-card {
+      background: var(--canvas);
+      border: 1px solid var(--hairline);
+      border-radius: var(--r-lg);
+      padding: var(--sp-xxl);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-lg);
+    }
+    .pricing-card--featured {
+      background: var(--hero-canvas);
+      border-color: var(--hero-canvas);
+      color: var(--on-hero);
+    }
+    .pricing-card__badge {
+      display: inline-block;
+      background: var(--fire);
+      color: var(--on-fire);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: var(--r-full);
+      margin-bottom: var(--sp-xs);
+    }
+    .pricing-card__tier {
+      font-size: 13px;
+      font-weight: 540;
+      color: var(--ink-faint);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .pricing-card--featured .pricing-card__tier { color: var(--on-dark-faint); }
+    .pricing-card__price {
+      display: flex;
+      align-items: baseline;
+      gap: var(--sp-xs);
+    }
+    .pricing-card__currency {
+      font-size: 22px;
+      font-weight: 460;
+      color: var(--ink-mute);
+    }
+    .pricing-card--featured .pricing-card__currency { color: var(--on-dark-mute); }
+    .pricing-card__amount {
+      font-size: 52px;
+      font-weight: 540;
+      line-height: 1;
+      letter-spacing: -2px;
+      color: var(--ink);
+    }
+    .pricing-card--featured .pricing-card__amount { color: var(--on-hero); }
+    .pricing-card__desc {
+      font-size: 15px;
+      font-weight: 460;
+      color: var(--ink-mute);
+      line-height: 1.65;
+    }
+    .pricing-card--featured .pricing-card__desc { color: var(--on-dark-mute); }
+    .pricing-card__divider {
+      height: 1px;
+      background: var(--hairline);
+      border: none;
+    }
+    .pricing-card--featured .pricing-card__divider { background: var(--hairline-dark); }
+    .pricing-card__features {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-md);
+      flex: 1;
+    }
+    .pricing-card__feature {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--sp-sm);
+      font-size: 14px;
+      font-weight: 460;
+      color: var(--ink);
+      line-height: 1.5;
+    }
+    .pricing-card--featured .pricing-card__feature { color: var(--on-dark-mute); }
+    .pricing-card__check {
+      color: var(--fire);
+      flex-shrink: 0;
+      margin-top: 1px;
+      font-weight: 700;
+    }
+    .pricing-card__cta { margin-top: auto; }
+
+    /* ─── CLOSING CTA BAND — deep teal ─────────────────────────── */
+    .cta-band {
+      background: var(--teal-canvas);
+      padding: 96px 0;
+      text-align: center;
+    }
+    .cta-band__inner {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .cta-band__title {
+      font-size: 48px;
+      font-weight: 540;
+      line-height: 1.04;
+      letter-spacing: -0.63px;
+      color: var(--on-hero);
+      margin-bottom: var(--sp-lg);
+    }
+    .cta-band__sub {
+      font-size: 18px;
+      font-weight: 460;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.6;
+      margin-bottom: var(--sp-xxl);
+    }
+
+    /* ─── FOOTER ────────────────────────────────────────────────── */
+    .footer {
+      background: var(--canvas);
+      border-top: 1px solid var(--hairline);
+      padding: var(--sp-huge) 0 var(--sp-xl);
+    }
+    .footer__inner {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: var(--sp-xxl);
+      margin-bottom: 48px;
+    }
+    .footer__brand { padding-right: var(--sp-xxl); }
+    .footer__logo {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--ink);
+      letter-spacing: -0.3px;
+      margin-bottom: var(--sp-md);
+    }
+    .footer__logo-flame { font-size: 16px; }
+    .footer__tagline {
+      font-size: 14px;
+      font-weight: 460;
+      color: var(--ink-mute);
+      line-height: 1.6;
+      max-width: 220px;
+      margin-bottom: var(--sp-lg);
+    }
+    .footer__social { display: flex; gap: var(--sp-md); }
+    .footer__social a {
+      font-size: 13px;
+      font-weight: 540;
+      color: var(--ink-mute);
+      transition: color 0.12s;
+    }
+    .footer__social a:hover { color: var(--ink); }
+    .footer__col-label {
+      font-size: 12px;
+      font-weight: 540;
+      color: var(--ink-faint);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: var(--sp-md);
+    }
+    .footer__links { display: flex; flex-direction: column; gap: var(--sp-sm); }
+    .footer__links a {
+      font-size: 14px;
+      font-weight: 460;
+      color: var(--ink-mute);
+      transition: color 0.12s;
+    }
+    .footer__links a:hover { color: var(--ink); }
+    .footer__bottom {
+      border-top: 1px solid var(--hairline);
+      padding-top: var(--sp-lg);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .footer__copy { font-size: 13px; font-weight: 460; color: var(--ink-faint); }
+    .footer__legal { display: flex; gap: var(--sp-xl); }
+    .footer__legal a {
+      font-size: 13px;
+      font-weight: 460;
+      color: var(--ink-faint);
+      transition: color 0.12s;
+    }
+    .footer__legal a:hover { color: var(--ink); }
+
+    /* ─── Responsive ────────────────────────────────────────────── */
+    @media (max-width: 1023px) {
+      .features__grid    { grid-template-columns: repeat(2, 1fr); }
+      .steps__grid       { grid-template-columns: repeat(2, 1fr); }
+      .steps__grid::before { display: none; }
+      .instructor__inner { grid-template-columns: 1fr; gap: 48px; }
+      .testimonials__grid { grid-template-columns: repeat(2, 1fr); }
+      .pricing__grid     { grid-template-columns: 1fr; max-width: 480px; margin: 0 auto; }
+      .footer__inner     { grid-template-columns: 1fr 1fr; }
+      .footer__brand     { grid-column: 1 / -1; }
+    }
+    @media (max-width: 767px) {
+      .hero__word        { letter-spacing: -3px; }
+      .nav__links        { display: none; }
+      .features__grid    { grid-template-columns: 1fr; }
+      .steps__grid       { grid-template-columns: 1fr; }
+      .curriculum__grid  { grid-template-columns: 1fr; }
+      .testimonials__grid { grid-template-columns: 1fr; }
+      .features__title,
+      .steps__title,
+      .curriculum__title,
+      .testimonials__title,
+      .pricing__title,
+      .cta-band__title   { font-size: 32px; letter-spacing: -0.5px; line-height: 1.1; }
+      .section           { padding: 64px 0; }
+      .cta-band          { padding: 64px 0; }
+      .footer__inner     { grid-template-columns: 1fr 1fr; }
+      .footer__bottom    { flex-direction: column; gap: var(--sp-sm); text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── 1. NAV ────────────────────────────────────────────────── -->
+  <nav class="nav" role="navigation" aria-label="Main navigation">
+    <div class="nav__inner">
+      <a href="/" class="nav__logo" aria-label="AI Fire home">
+        <span class="nav__logo-flame" aria-hidden="true">🔥</span>
+        AI Fire
+      </a>
+
+      <div class="nav__links" role="list">
+        <a href="#curriculum"   role="listitem">Curriculum</a>
+        <a href="#how-it-works" role="listitem">How it works</a>
+        <a href="#pricing"      role="listitem">Pricing</a>
+        <a href="#community"    role="listitem">Community</a>
+      </div>
+
+      <div class="nav__actions">
+        <a href="#" class="btn btn--nav btn--secondary">Login</a>
+        <a href="#pricing" class="btn btn--nav btn--primary">Join the course</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── 2. HERO ───────────────────────────────────────────────── -->
+  <section class="hero" aria-labelledby="hero-headline">
+    <div class="container">
+      <div class="hero__inner">
+
+        <div class="hero__badge" role="note">
+          <span class="hero__badge-dot" aria-hidden="true"></span>
+          New course &nbsp;·&nbsp; 6 modules &nbsp;·&nbsp; Self-paced
+        </div>
+
+        <h1 id="hero-headline">
+          <span class="hero__word">HERMES</span>
+          <span class="hero__wordmark-sub">Agent Course</span>
+        </h1>
+
+        <p class="hero__sub">
+          Learn to build practical AI agents for automation, research, content creation, and business workflows — step by step. No engineering background required.
+        </p>
+
+        <div class="hero__actions">
+          <a href="#pricing" class="btn btn--pill btn--primary">Join The Hermes Agent Course →</a>
+          <a href="#curriculum" class="btn btn--pill btn--ghost-dark">See curriculum</a>
+        </div>
+
+        <p class="hero__note">Lifetime access &nbsp;·&nbsp; 30-day money-back guarantee</p>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 3. SOCIAL PROOF BAR ───────────────────────────────────── -->
+  <div class="proof" aria-label="Builders from leading companies">
+    <div class="container">
+      <div class="proof__inner">
+        <p class="proof__label">Builders from</p>
+        <div class="proof__divider" aria-hidden="true"></div>
+        <div class="proof__companies" role="list">
+          <span class="proof__company" role="listitem">Google</span>
+          <span class="proof__company" role="listitem">Notion</span>
+          <span class="proof__company" role="listitem">Figma</span>
+          <span class="proof__company" role="listitem">Airtable</span>
+          <span class="proof__company" role="listitem">OpenAI</span>
+          <span class="proof__company" role="listitem">GitHub</span>
+          <span class="proof__company" role="listitem">Slack</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 4. FEATURES ──────────────────────────────────────────── -->
+  <section class="section features" id="features" aria-labelledby="features-title">
+    <div class="container">
+      <div class="features__header">
+        <p class="eyebrow eyebrow--orange">Why this course</p>
+        <h2 class="features__title" id="features-title">Built for builders<br/>who ship real work.</h2>
+        <p class="features__lead">Hermes Agent Course teaches practical, no-fluff systems using AI agents, HTML dashboards, and automation — designed for founders, creators, and marketers.</p>
+      </div>
+
+      <div class="features__grid">
+        <div class="feature-card">
+          <div class="feature-card__icon" aria-hidden="true">⚡</div>
+          <h3 class="feature-card__title">Real workflows, not toy demos</h3>
+          <p class="feature-card__body">Every module is built around actual business use cases — automation, research pipelines, content creation, and executive reporting.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card__icon" aria-hidden="true">🧩</div>
+          <h3 class="feature-card__title">Templates from day one</h3>
+          <p class="feature-card__body">Start with working project files and adapt them to your workflow. No rebuilding from scratch — just modify and deploy.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card__icon" aria-hidden="true">🚀</div>
+          <h3 class="feature-card__title">No engineering background needed</h3>
+          <p class="feature-card__body">Built for founders, creators, and marketers. If you can use Notion or Airtable, you can build a Hermes-style agent.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card__icon" aria-hidden="true">🔄</div>
+          <h3 class="feature-card__title">Lifetime updates</h3>
+          <p class="feature-card__body">AI tools evolve fast. Pro and Cohort students get every update, new module, and workflow addition — forever.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card__icon" aria-hidden="true">🏆</div>
+          <h3 class="feature-card__title">Live workshops & feedback</h3>
+          <p class="feature-card__body">Cohort students join live workshop sessions and get direct feedback from Robin on their agent builds and dashboards.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card__icon" aria-hidden="true">💬</div>
+          <h3 class="feature-card__title">Private Discord community</h3>
+          <p class="feature-card__body">Ask questions, share your projects, get feedback, and access course updates in the private AI Fire Discord.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 5. HOW IT WORKS ──────────────────────────────────────── -->
+  <section class="section steps" id="how-it-works" aria-labelledby="steps-title">
+    <div class="container">
+      <div class="steps__header">
+        <p class="eyebrow eyebrow--orange">How it works</p>
+        <h2 class="steps__title" id="steps-title">Four steps to your first agent.</h2>
+      </div>
+      <div class="steps__grid">
+        <div class="step">
+          <div class="step__num" aria-hidden="true">1</div>
+          <h3 class="step__title">Watch the lessons</h3>
+          <p class="step__body">Short, focused modules you complete at your own pace — no fluff, no filler, every lesson ships something real.</p>
+        </div>
+        <div class="step">
+          <div class="step__num" aria-hidden="true">2</div>
+          <h3 class="step__title">Apply the templates</h3>
+          <p class="step__body">Start from working project files and adapt them to your specific workflow or use case immediately.</p>
+        </div>
+        <div class="step">
+          <div class="step__num" aria-hidden="true">3</div>
+          <h3 class="step__title">Build your agent</h3>
+          <p class="step__body">Ship a real, working AI agent by the end of the course — not a sandbox demo, something you can use tomorrow.</p>
+        </div>
+        <div class="step">
+          <div class="step__num" aria-hidden="true">4</div>
+          <h3 class="step__title">Share & get feedback</h3>
+          <p class="step__body">Post in the Discord community, get feedback from peers and Robin, and keep iterating on your builds.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 6. CURRICULUM ────────────────────────────────────────── -->
+  <section class="section curriculum" id="curriculum" aria-labelledby="curriculum-title">
+    <div class="container">
+      <div class="curriculum__header">
+        <p class="eyebrow eyebrow--orange">6 modules</p>
+        <h2 class="curriculum__title" id="curriculum-title">Everything you need<br/>to build real agents.</h2>
+        <p class="curriculum__lead">From foundations to publishing — a complete, step-by-step path to your first Hermes-style AI agent.</p>
+      </div>
+
+      <div class="curriculum__grid">
+        <div class="module-card">
+          <span class="module-card__num">01</span>
+          <div>
+            <h3 class="module-card__title">Foundations & Setup</h3>
+            <p class="module-card__desc">Set up your environment, understand how AI agents work, and build your first simple automation loop.</p>
+          </div>
+        </div>
+        <div class="module-card">
+          <span class="module-card__num">02</span>
+          <div>
+            <h3 class="module-card__title">Dashboard Design Principles</h3>
+            <p class="module-card__desc">Learn the visual language of executive dashboards — layout, hierarchy, data ink ratio, and clean output formatting.</p>
+          </div>
+        </div>
+        <div class="module-card">
+          <span class="module-card__num">03</span>
+          <div>
+            <h3 class="module-card__title">Data Cleaning & Structure</h3>
+            <p class="module-card__desc">Transform raw, messy data into clean, structured inputs your agents can reliably work with every time.</p>
+          </div>
+        </div>
+        <div class="module-card">
+          <span class="module-card__num">04</span>
+          <div>
+            <h3 class="module-card__title">Building Executive Dashboards</h3>
+            <p class="module-card__desc">Build polished, shareable HTML dashboards that communicate insights clearly to stakeholders and clients.</p>
+          </div>
+        </div>
+        <div class="module-card">
+          <span class="module-card__num">05</span>
+          <div>
+            <h3 class="module-card__title">AI-Assisted Workflow</h3>
+            <p class="module-card__desc">Wire AI into your workflow — prompt engineering, agent chaining, and building repeatable research pipelines.</p>
+          </div>
+        </div>
+        <div class="module-card">
+          <span class="module-card__num">06</span>
+          <div>
+            <h3 class="module-card__title">Publishing & Sharing Your Project</h3>
+            <p class="module-card__desc">Deploy and share your finished agent and dashboard — ready for clients, your portfolio, or internal teams.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 7. INSTRUCTOR ─────────────────────────────────────────── -->
+  <section class="section instructor" id="instructor" aria-labelledby="instructor-title">
+    <div class="container">
+      <div class="instructor__inner">
+        <div>
+          <p class="instructor__label">Your instructor</p>
+          <h2 class="instructor__name" id="instructor-title">Robin Do</h2>
+          <p class="instructor__bio">AI workflow builder and dashboard creator helping learners turn raw data and ideas into polished, shareable web-based projects. Robin focuses on practical, no-fluff systems using AI, HTML dashboards, and automation tools.</p>
+          <p class="instructor__bio">Students in Robin's courses ship real work — not sandbox demos. The focus is always on the output: something you can send to a client, add to your portfolio, or use in your business tomorrow.</p>
+        </div>
+        <div class="instructor__card">
+          <div class="instructor__avatar" aria-hidden="true">🔥</div>
+          <p class="instructor__card-name">Robin Do</p>
+          <p class="instructor__card-role">AI Workflow Builder &amp; Course Creator<br/>at AI Fire</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 8. TESTIMONIALS ───────────────────────────────────────── -->
+  <section class="section testimonials" id="testimonials" aria-labelledby="testimonials-title">
+    <div class="container">
+      <div class="testimonials__header">
+        <p class="eyebrow eyebrow--orange">Student results</p>
+        <h2 class="testimonials__title" id="testimonials-title">What builders are saying.</h2>
+      </div>
+      <div class="testimonials__grid">
+        <div class="testimonial-card">
+          <div class="testimonial-card__stars" aria-label="5 stars">★★★★★</div>
+          <p class="testimonial-card__quote">"This course helped me turn a basic dataset into a polished executive dashboard in one afternoon."</p>
+          <p class="testimonial-card__author">— Minh T.</p>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-card__stars" aria-label="5 stars">★★★★★</div>
+          <p class="testimonial-card__quote">"The templates and step-by-step workflow saved me hours. I went from idea to working agent faster than I expected."</p>
+          <p class="testimonial-card__author">— Sarah L.</p>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-card__stars" aria-label="5 stars">★★★★★</div>
+          <p class="testimonial-card__quote">"I finally understood how to publish my HTML dashboard and share it with clients. Game-changer for my consulting work."</p>
+          <p class="testimonial-card__author">— David N.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 9. PRICING ───────────────────────────────────────────── -->
+  <section class="section pricing" id="pricing" aria-labelledby="pricing-title">
+    <div class="container">
+      <div class="pricing__header">
+        <p class="eyebrow eyebrow--orange">Pricing</p>
+        <h2 class="pricing__title" id="pricing-title">One payment. Lifetime access.</h2>
+        <p class="pricing__lead">No subscriptions. Pay once, keep it forever.</p>
+      </div>
+
+      <div class="pricing__grid">
+
+        <!-- Starter -->
+        <div class="pricing-card" role="region" aria-label="Starter tier">
+          <div>
+            <p class="pricing-card__tier">Starter</p>
+          </div>
+          <div class="pricing-card__price">
+            <span class="pricing-card__currency">$</span>
+            <span class="pricing-card__amount">49</span>
+          </div>
+          <p class="pricing-card__desc">Everything you need to start building agents and dashboards at your own pace.</p>
+          <hr class="pricing-card__divider" />
+          <ul class="pricing-card__features">
+            <li class="pricing-card__feature"><span class="pricing-card__check" aria-hidden="true">✓</span> Self-paced video lessons</li>
+            <li class="pricing-card__feature"><span class="pricing-card__check" aria-hidden="true">✓</span> Ready-to-use templates</li>
+            <li class="pricing-card__feature"><span class="pricing-card__check" aria-hidden="true">✓</span> Dashboard examples</li>
+            <li class="pricing-card__feature"><span class="pricing-card__check" aria-hidden="true">✓</span> 30-day money-back guarantee</li>
+          </ul>
+          <div class="pricing-card__cta">
+            <a href="#" class="btn btn--rect btn--secondary btn--full">Get Starter</a>
+          </div>
+        </div>
+
+        <!-- Pro — Featured -->
+        <div class="pricing-card pricing-card--featured" role="region" aria-label="Pro tier — most popular">
+          <div>
+            <span class="pricing-card__badge">Most popular</span>
+            <p class="pricing-card__tier">Pro</p>
+          </div>
+          <div class="pricing-card__price">
+            <span class="pricing-card__currency">$</span>
+            <span class="pricing-card__amount">149</span>
+          </div>
+          <p class="pricing-card__desc">Everything in Starter, plus project files, advanced prompts, and all future updates.</p>
+          <hr class="pricing-card__divider" />
+          <ul class="pricing-card__features">
+            <li class="pricing-card__feature"><span class="pricing-card__check" aria-hidden="true">✓</span> Everything in Starter</li>
+            <li class="pricing-card__feature"><span class="pricing-card__check" aria-hidden="true">✓</span> Full project source files</li>
+            <li class="pricing-card__feature"><span class="pricing-card__check" aria-hidden="true">✓</span> Advanced prompt library</li>
+            <li class="pricing-card__feature"><span class="pricing-card__check" aria-hidden="true">✓</span> Lifetime course updates</li>
+            <li class="pricing-card__feature"><span class="pricing-card__check" aria-hidden="true">✓</span> 30-day money-back guarantee</li>
+          </ul>
+          <div class="pricing-card__cta">
+            <a href="#" class="btn btn--rect btn--primary btn--full">Get Pro</a>
+          </div>
+        </div>
+
+        <!-- Cohort Access -->
+        <div class="pricing-card" role="region" aria-label="Cohort Access tier">
+          <div>
+            <p class="pricing-card__tier">Cohort Access</p>
+          </div>
+          <div class="pricing-card__price">
+            <span class="pricing-card__currency">$</span>
+            <span class="pricing-card__amount">499</span>
+          </div>
+          <p class="pricing-card__desc">Everything in Pro, plus live workshops, private feedback, community, and a certificate.</p>
+          <hr class="pricing-card__divider" />
+          <ul class="pricing-card__features">
+            <li class="pricing-card__feature"><span class="pricing-card__check" aria-hidden="true">✓</span> Everything in Pro</li>
+            <li class="pricing-card__feature"><span class="pricing-card__check" aria-hidden="true">✓</span> Live workshops with Robin</li>
+            <li class="pricing-card__feature"><span class="pricing-card__check" aria-hidden="true">✓</span> Private feedback on your builds</li>
+            <li class="pricing-card__feature"><span class="pricing-card__check" aria-hidden="true">✓</span> Private Discord community</li>
+            <li class="pricing-card__feature"><span class="pricing-card__check" aria-hidden="true">✓</span> Course completion certificate</li>
+          </ul>
+          <div class="pricing-card__cta">
+            <a href="#" class="btn btn--rect btn--secondary btn--full">Get Cohort Access</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 10. CTA BAND — deep teal resolving chord ─────────────── -->
+  <section class="cta-band" id="community" aria-labelledby="cta-title">
+    <div class="cta-band__inner">
+      <p class="eyebrow eyebrow--light">Ready to build?</p>
+      <h2 class="cta-band__title" id="cta-title">Start building your first agent today.</h2>
+      <p class="cta-band__sub">Join hundreds of founders, creators, and marketers building real AI workflows with Hermes.</p>
+      <a href="#pricing" class="btn btn--rect btn--on-teal">Join The Hermes Agent Course →</a>
+    </div>
+  </section>
+
+  <!-- ── 11. FOOTER ────────────────────────────────────────────── -->
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer__inner">
+        <div class="footer__brand">
+          <div class="footer__logo">
+            <span class="footer__logo-flame" aria-hidden="true">🔥</span>
+            AI Fire
+          </div>
+          <p class="footer__tagline">Practical AI education for founders, creators, and marketers who build real things.</p>
+          <div class="footer__social" role="list">
+            <a href="#" role="listitem">Twitter</a>
+            <a href="#" role="listitem">Discord</a>
+            <a href="#" role="listitem">YouTube</a>
+          </div>
+        </div>
+        <div>
+          <p class="footer__col-label">Course</p>
+          <ul class="footer__links">
+            <li><a href="#curriculum">Curriculum</a></li>
+            <li><a href="#how-it-works">How it works</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#instructor">About Robin</a></li>
+          </ul>
+        </div>
+        <div>
+          <p class="footer__col-label">Community</p>
+          <ul class="footer__links">
+            <li><a href="#">Discord</a></li>
+            <li><a href="#">Student projects</a></li>
+            <li><a href="#testimonials">Testimonials</a></li>
+          </ul>
+        </div>
+        <div>
+          <p class="footer__col-label">Company</p>
+          <ul class="footer__links">
+            <li><a href="#">About AI Fire</a></li>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer__bottom">
+        <p class="footer__copy">© 2026 AI Fire. All rights reserved.</p>
+        <nav class="footer__legal" aria-label="Legal">
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+          <a href="#">Refund policy</a>
+        </nav>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
