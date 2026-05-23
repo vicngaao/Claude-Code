@@ -1,0 +1,1575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AgencyAI Mastery — Automate Your Agency with AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Reset & Base ─────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #050810;
+      --surface:   #0c1120;
+      --surface2:  #111827;
+      --border:    rgba(255,255,255,0.07);
+      --gold:      #f5a623;
+      --gold-dim:  #c4841b;
+      --blue:      #3b82f6;
+      --blue-glow: rgba(59,130,246,0.25);
+      --cyan:      #06b6d4;
+      --green:     #10b981;
+      --text:      #f1f5f9;
+      --text-muted:#94a3b8;
+      --text-dim:  #64748b;
+      --radius:    14px;
+      --max:       1140px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4 { font-family: 'Sora', sans-serif; line-height: 1.2; }
+
+    a { color: inherit; text-decoration: none; }
+
+    .container { max-width: var(--max); margin: 0 auto; padding: 0 24px; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(245,166,35,0.1);
+      border: 1px solid rgba(245,166,35,0.3);
+      color: var(--gold);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 100px;
+    }
+
+    .badge::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.5; transform: scale(1.4); }
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 32px;
+      border-radius: 10px;
+      font-family: 'Sora', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #f5a623 0%, #e8891a 100%);
+      color: #000;
+      box-shadow: 0 4px 24px rgba(245,166,35,0.4);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(245,166,35,0.55);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1.5px solid var(--border);
+      color: var(--text);
+    }
+    .btn-outline:hover {
+      border-color: rgba(255,255,255,0.25);
+      background: rgba(255,255,255,0.04);
+    }
+
+    section { position: relative; }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+
+    .section-sub {
+      font-size: 17px;
+      color: var(--text-muted);
+      max-width: 560px;
+      line-height: 1.7;
+    }
+
+    /* ── Nav ────────────────────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 18px 0;
+      border-bottom: 1px solid transparent;
+      transition: all 0.3s;
+    }
+    nav.scrolled {
+      background: rgba(5,8,16,0.92);
+      backdrop-filter: blur(16px);
+      border-color: var(--border);
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: 'Sora', sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-logo .logo-icon {
+      width: 34px; height: 34px;
+      background: linear-gradient(135deg, var(--gold), #e8891a);
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      font-size: 18px;
+    }
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-muted);
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta { display: flex; gap: 12px; align-items: center; }
+
+    /* ── Hero ───────────────────────────────────────────────────────── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 120px 0 80px;
+      overflow: hidden;
+    }
+
+    .hero-glow {
+      position: absolute;
+      top: -200px; left: 50%; transform: translateX(-50%);
+      width: 900px; height: 700px;
+      background: radial-gradient(ellipse at center,
+        rgba(245,166,35,0.12) 0%,
+        rgba(59,130,246,0.08) 40%,
+        transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+    }
+
+    .hero-eyebrow { margin-bottom: 24px; }
+
+    .hero-title {
+      font-size: clamp(36px, 5vw, 64px);
+      font-weight: 900;
+      line-height: 1.08;
+      margin-bottom: 22px;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-title .highlight {
+      background: linear-gradient(135deg, #f5a623, #fbbf24);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      font-size: 18px;
+      color: var(--text-muted);
+      line-height: 1.75;
+      margin-bottom: 36px;
+      max-width: 480px;
+    }
+
+    .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 40px; }
+
+    .hero-trust {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+    .hero-trust .avatars {
+      display: flex;
+    }
+    .hero-trust .avatars span {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      border: 2px solid var(--bg);
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      margin-left: -10px;
+      display: grid;
+      place-items: center;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .hero-trust .avatars span:first-child { margin-left: 0; }
+    .hero-trust .avatars span:nth-child(2) { background: linear-gradient(135deg, #10b981, #06b6d4); }
+    .hero-trust .avatars span:nth-child(3) { background: linear-gradient(135deg, #f5a623, #ef4444); }
+    .hero-trust .avatars span:nth-child(4) { background: linear-gradient(135deg, #8b5cf6, #3b82f6); }
+
+    /* Hero visual */
+    .hero-visual {
+      position: relative;
+    }
+    .dashboard-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+    .dashboard-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(245,166,35,0.04), rgba(59,130,246,0.04));
+    }
+    .dash-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 22px;
+    }
+    .dash-title { font-size: 13px; font-weight: 600; color: var(--text-muted); }
+    .dash-dots { display: flex; gap: 5px; }
+    .dash-dots span {
+      width: 8px; height: 8px; border-radius: 50%;
+    }
+    .dash-dots span:nth-child(1) { background: #ef4444; }
+    .dash-dots span:nth-child(2) { background: var(--gold); }
+    .dash-dots span:nth-child(3) { background: var(--green); }
+
+    .metric-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .metric-box {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+    }
+    .metric-label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .metric-val { font-family: 'Sora', sans-serif; font-size: 22px; font-weight: 800; }
+    .metric-val.up { color: var(--green); }
+    .metric-val.gold { color: var(--gold); }
+    .metric-val.blue { color: var(--blue); }
+    .metric-change { font-size: 11px; color: var(--green); margin-top: 2px; }
+
+    .automation-list { display: flex; flex-direction: column; gap: 8px; }
+    .auto-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 11px 14px;
+      font-size: 13px;
+    }
+    .auto-icon {
+      width: 28px; height: 28px;
+      border-radius: 6px;
+      display: grid;
+      place-items: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .auto-name { font-weight: 500; flex: 1; }
+    .auto-status {
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 100px;
+      font-weight: 600;
+    }
+    .status-active { background: rgba(16,185,129,0.15); color: var(--green); }
+    .status-running { background: rgba(59,130,246,0.15); color: var(--blue); }
+    .status-done { background: rgba(148,163,184,0.1); color: var(--text-muted); }
+
+    .floating-pill {
+      position: absolute;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 10px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+    .pill-tl { top: -18px; left: -24px; }
+    .pill-br { bottom: -18px; right: -24px; }
+    .pill-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+    /* ── Logo Bar ───────────────────────────────────────────────────── */
+    #logos {
+      padding: 48px 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .logos-label {
+      text-align: center;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-dim);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+    }
+    .logos-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+    .logo-item {
+      font-family: 'Sora', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-dim);
+      opacity: 0.55;
+      letter-spacing: -0.01em;
+      transition: opacity 0.2s;
+    }
+    .logo-item:hover { opacity: 0.85; }
+
+    /* ── Benefits ───────────────────────────────────────────────────── */
+    #benefits { padding: 100px 0; }
+
+    .benefits-header { text-align: center; margin-bottom: 60px; }
+    .benefits-header .section-sub { margin: 0 auto; }
+
+    .benefits-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .benefit-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px 28px;
+      transition: border-color 0.25s, transform 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .benefit-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--gold), transparent);
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+    .benefit-card:hover { border-color: rgba(255,255,255,0.14); transform: translateY(-4px); }
+    .benefit-card:hover::before { opacity: 1; }
+
+    .benefit-icon {
+      width: 52px; height: 52px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      font-size: 24px;
+      margin-bottom: 18px;
+    }
+    .benefit-title { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
+    .benefit-desc { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+
+    /* ── Social Proof ───────────────────────────────────────────────── */
+    #proof { padding: 100px 0; background: var(--surface); }
+
+    .proof-header { text-align: center; margin-bottom: 56px; }
+    .proof-header .section-sub { margin: 0 auto; }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 64px;
+    }
+    .stat-item {
+      background: var(--surface2);
+      padding: 36px 28px;
+      text-align: center;
+    }
+    .stat-num {
+      font-family: 'Sora', sans-serif;
+      font-size: 42px;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--gold), #fbbf24);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .stat-desc { font-size: 14px; color: var(--text-muted); }
+
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .tcard {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      position: relative;
+    }
+    .tcard-quote {
+      font-size: 36px;
+      line-height: 1;
+      color: var(--gold);
+      margin-bottom: 12px;
+      font-family: Georgia, serif;
+    }
+    .tcard-text {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.75;
+      margin-bottom: 20px;
+    }
+    .tcard-author {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .tcard-avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .tcard-name { font-size: 14px; font-weight: 600; }
+    .tcard-role { font-size: 12px; color: var(--text-dim); }
+    .tcard-stars { display: flex; gap: 2px; margin-bottom: 12px; }
+    .star { color: var(--gold); font-size: 13px; }
+
+    /* Featured testimonial */
+    .tcard.featured {
+      border-color: rgba(245,166,35,0.3);
+      background: linear-gradient(135deg, rgba(245,166,35,0.04), var(--bg));
+      grid-column: span 1;
+    }
+
+    /* ── Modules ────────────────────────────────────────────────────── */
+    #modules { padding: 100px 0; }
+
+    .modules-header { margin-bottom: 52px; }
+
+    .modules-layout {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 40px;
+      align-items: start;
+    }
+
+    .modules-sidebar {
+      position: sticky;
+      top: 100px;
+    }
+    .module-nav { display: flex; flex-direction: column; gap: 6px; }
+    .module-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.2s;
+      border: 1px solid transparent;
+    }
+    .module-nav-item.active {
+      background: rgba(245,166,35,0.08);
+      border-color: rgba(245,166,35,0.2);
+    }
+    .module-nav-item:hover:not(.active) { background: var(--surface); }
+    .module-num {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      background: var(--surface2);
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-dim);
+      flex-shrink: 0;
+    }
+    .module-nav-item.active .module-num {
+      background: rgba(245,166,35,0.2);
+      color: var(--gold);
+    }
+    .module-nav-label { font-size: 14px; font-weight: 500; }
+
+    .modules-cards { display: flex; flex-direction: column; gap: 16px; }
+    .module-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 30px;
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 18px;
+      align-items: start;
+      transition: border-color 0.2s;
+    }
+    .module-card:hover { border-color: rgba(255,255,255,0.12); }
+    .module-icon-box {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      font-size: 22px;
+      background: var(--surface2);
+      flex-shrink: 0;
+    }
+    .module-card-num { font-size: 11px; font-weight: 700; color: var(--gold); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; }
+    .module-card-title { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+    .module-card-desc { font-size: 14px; color: var(--text-muted); line-height: 1.65; margin-bottom: 14px; }
+    .module-lessons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .lesson-tag {
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 100px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+    }
+
+    /* ── Pricing ────────────────────────────────────────────────────── */
+    #pricing { padding: 100px 0; background: var(--surface); }
+
+    .pricing-header { text-align: center; margin-bottom: 16px; }
+
+    .pricing-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 52px;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+    .toggle-switch {
+      width: 48px; height: 26px;
+      background: rgba(245,166,35,0.3);
+      border-radius: 100px;
+      cursor: pointer;
+      position: relative;
+      transition: background 0.2s;
+    }
+    .toggle-switch.on { background: var(--gold); }
+    .toggle-knob {
+      position: absolute;
+      top: 3px; left: 3px;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: #fff;
+      transition: transform 0.2s;
+    }
+    .toggle-switch.on .toggle-knob { transform: translateX(22px); }
+    .save-pill {
+      background: rgba(16,185,129,0.15);
+      border: 1px solid rgba(16,185,129,0.3);
+      color: var(--green);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 100px;
+      letter-spacing: 0.04em;
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      align-items: start;
+    }
+
+    .price-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 36px 30px;
+      position: relative;
+      transition: transform 0.2s;
+    }
+    .price-card:hover { transform: translateY(-4px); }
+    .price-card.popular {
+      border-color: var(--gold);
+      background: linear-gradient(180deg, rgba(245,166,35,0.06) 0%, var(--bg) 60%);
+      transform: scale(1.03);
+    }
+    .price-card.popular:hover { transform: scale(1.03) translateY(-4px); }
+
+    .popular-badge {
+      position: absolute;
+      top: -13px; left: 50%; transform: translateX(-50%);
+      background: linear-gradient(135deg, var(--gold), #e8891a);
+      color: #000;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 5px 18px;
+      border-radius: 100px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .plan-name { font-size: 13px; font-weight: 700; color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
+    .plan-price {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+    .plan-currency { font-size: 22px; font-weight: 700; color: var(--text-muted); margin-top: 4px; }
+    .plan-amount {
+      font-family: 'Sora', sans-serif;
+      font-size: 54px;
+      font-weight: 900;
+      line-height: 1;
+      color: var(--text);
+    }
+    .plan-period { font-size: 14px; color: var(--text-dim); }
+    .plan-desc { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; line-height: 1.5; }
+    .plan-divider { border: none; border-top: 1px solid var(--border); margin-bottom: 24px; }
+    .plan-features { display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px; }
+    .plan-feature {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 14px;
+    }
+    .feat-icon {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 10px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .feat-icon.yes { background: rgba(16,185,129,0.15); color: var(--green); }
+    .feat-icon.gold { background: rgba(245,166,35,0.15); color: var(--gold); }
+    .feat-icon.no  { background: rgba(100,116,139,0.15); color: var(--text-dim); }
+
+    .plan-btn {
+      width: 100%;
+      justify-content: center;
+      padding: 15px;
+      font-size: 15px;
+    }
+    .plan-btn.ghost {
+      background: var(--surface2);
+      color: var(--text);
+    }
+    .plan-btn.ghost:hover { background: rgba(255,255,255,0.08); }
+
+    .guarantee-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 40px;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+    .guarantee-icon { font-size: 22px; }
+
+    /* ── FAQ ────────────────────────────────────────────────────────── */
+    #faq { padding: 100px 0; }
+
+    .faq-header { text-align: center; margin-bottom: 52px; }
+    .faq-header .section-sub { margin: 0 auto; }
+
+    .faq-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .faq-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .faq-q {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 20px 22px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+    .faq-q:hover { background: rgba(255,255,255,0.03); }
+    .faq-chevron {
+      width: 24px; height: 24px;
+      border-radius: 6px;
+      background: var(--surface2);
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      flex-shrink: 0;
+      transition: transform 0.25s, background 0.2s;
+      color: var(--text-muted);
+    }
+    .faq-item.open .faq-chevron {
+      transform: rotate(180deg);
+      background: rgba(245,166,35,0.15);
+      color: var(--gold);
+    }
+    .faq-a {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s;
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.75;
+    }
+    .faq-item.open .faq-a {
+      max-height: 300px;
+      padding: 0 22px 20px;
+    }
+
+    /* ── Final CTA ──────────────────────────────────────────────────── */
+    #cta {
+      padding: 120px 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-glow {
+      position: absolute;
+      bottom: -200px; left: 50%; transform: translateX(-50%);
+      width: 800px; height: 600px;
+      background: radial-gradient(ellipse, rgba(245,166,35,0.14), transparent 70%);
+      pointer-events: none;
+    }
+    .cta-box {
+      background: var(--surface);
+      border: 1px solid rgba(245,166,35,0.2);
+      border-radius: 24px;
+      padding: 72px 48px;
+      position: relative;
+      overflow: hidden;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .cta-box::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(245,166,35,0.06) 0%, transparent 60%);
+    }
+    .cta-title {
+      font-size: clamp(28px, 4vw, 48px);
+      font-weight: 900;
+      line-height: 1.15;
+      margin-bottom: 18px;
+    }
+    .cta-sub {
+      font-size: 17px;
+      color: var(--text-muted);
+      max-width: 520px;
+      margin: 0 auto 36px;
+      line-height: 1.7;
+    }
+    .cta-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 24px; }
+    .cta-note { font-size: 13px; color: var(--text-dim); }
+
+    /* ── Footer ─────────────────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px 0;
+    }
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .footer-copy { font-size: 13px; color: var(--text-dim); }
+    .footer-links { display: flex; gap: 24px; }
+    .footer-links a { font-size: 13px; color: var(--text-dim); transition: color 0.2s; }
+    .footer-links a:hover { color: var(--text-muted); }
+
+    /* ── Responsive ─────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .hero-grid, .modules-layout { grid-template-columns: 1fr; }
+      .hero-visual { display: none; }
+      .benefits-grid, .testimonials-grid, .pricing-grid { grid-template-columns: 1fr; }
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .faq-grid { grid-template-columns: 1fr; }
+      .price-card.popular { transform: none; }
+      .nav-links { display: none; }
+      .modules-sidebar { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ───────────────────────────────────────────────────────────── -->
+<nav id="nav">
+  <div class="container nav-inner">
+    <div class="nav-logo">
+      <div class="logo-icon">⚡</div>
+      AgencyAI
+    </div>
+    <ul class="nav-links">
+      <li><a href="#benefits">Benefits</a></li>
+      <li><a href="#modules">Modules</a></li>
+      <li><a href="#proof">Results</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a href="#pricing" class="btn btn-primary" style="padding:11px 22px;font-size:14px;">Enroll Now →</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ── HERO ──────────────────────────────────────────────────────────── -->
+<section id="hero">
+  <div class="hero-glow"></div>
+  <div class="container">
+    <div class="hero-grid">
+      <!-- Left -->
+      <div>
+        <div class="hero-eyebrow">
+          <span class="badge">Now Open — Cohort 4</span>
+        </div>
+        <h1 class="hero-title">
+          Automate Your Agency.<br />
+          <span class="highlight">10× Your Output.</span><br />
+          Keep the Profit.
+        </h1>
+        <p class="hero-sub">
+          The only course built specifically for agency owners who want to deploy AI automation across client delivery, operations, and sales — without hiring more staff.
+        </p>
+        <div class="hero-actions">
+          <a href="#pricing" class="btn btn-primary">Get Instant Access →</a>
+          <a href="#modules" class="btn btn-outline">See the Curriculum</a>
+        </div>
+        <div class="hero-trust">
+          <div class="avatars">
+            <span>MK</span>
+            <span>JR</span>
+            <span>AL</span>
+            <span>+</span>
+          </div>
+          <span>Joined by <strong style="color:var(--text)">2,400+ agency owners</strong> across 38 countries</span>
+        </div>
+      </div>
+
+      <!-- Right — Dashboard mockup -->
+      <div class="hero-visual">
+        <div class="floating-pill pill-tl" style="color:var(--green);">
+          <div class="pill-dot" style="background:var(--green);"></div>
+          Client report generated in 4s
+        </div>
+
+        <div class="dashboard-card">
+          <div class="dash-header">
+            <span class="dash-title">Agency Automation Dashboard</span>
+            <div class="dash-dots"><span></span><span></span><span></span></div>
+          </div>
+          <div class="metric-row">
+            <div class="metric-box">
+              <div class="metric-label">Hours Saved</div>
+              <div class="metric-val up">47h</div>
+              <div class="metric-change">↑ this week</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-label">Revenue / Client</div>
+              <div class="metric-val gold">$8.4k</div>
+              <div class="metric-change" style="color:var(--gold)">↑ 34%</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-label">Active Flows</div>
+              <div class="metric-val blue">23</div>
+              <div class="metric-change" style="color:var(--blue)">running live</div>
+            </div>
+          </div>
+          <div class="automation-list">
+            <div class="auto-item">
+              <div class="auto-icon" style="background:rgba(16,185,129,0.12);">📝</div>
+              <div class="auto-name">Monthly Report Generator</div>
+              <div class="auto-status status-active">Active</div>
+            </div>
+            <div class="auto-item">
+              <div class="auto-icon" style="background:rgba(59,130,246,0.12);">📧</div>
+              <div class="auto-name">Client Onboarding Flow</div>
+              <div class="auto-status status-running">Running</div>
+            </div>
+            <div class="auto-item">
+              <div class="auto-icon" style="background:rgba(245,166,35,0.12);">📊</div>
+              <div class="auto-name">Ad Performance Digest</div>
+              <div class="auto-status status-active">Active</div>
+            </div>
+            <div class="auto-item">
+              <div class="auto-icon" style="background:rgba(139,92,246,0.12);">🔁</div>
+              <div class="auto-name">Lead Nurture Sequence</div>
+              <div class="auto-status status-done">Complete</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="floating-pill pill-br" style="color:var(--gold);">
+          <div class="pill-dot" style="background:var(--gold);"></div>
+          $12,000 proposal sent automatically
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── LOGO BAR ───────────────────────────────────────────────────────── -->
+<section id="logos">
+  <div class="container">
+    <p class="logos-label">Tools you'll master inside the course</p>
+    <div class="logos-row">
+      <span class="logo-item">ChatGPT</span>
+      <span class="logo-item">Claude</span>
+      <span class="logo-item">Make.com</span>
+      <span class="logo-item">n8n</span>
+      <span class="logo-item">Zapier</span>
+      <span class="logo-item">Notion AI</span>
+      <span class="logo-item">Airtable</span>
+      <span class="logo-item">Slack</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── BENEFITS ───────────────────────────────────────────────────────── -->
+<section id="benefits">
+  <div class="container">
+    <div class="benefits-header">
+      <p class="section-label">Why AgencyAI Mastery</p>
+      <h2 class="section-title">Everything Your Agency Needs<br />to Run Leaner and Earn More</h2>
+      <p class="section-sub">Stop trading hours for dollars. These six shifts will permanently change how your agency operates.</p>
+    </div>
+
+    <div class="benefits-grid">
+      <div class="benefit-card">
+        <div class="benefit-icon" style="background:rgba(245,166,35,0.1);">⚡</div>
+        <h3 class="benefit-title">Deliver Faster, Not Harder</h3>
+        <p class="benefit-desc">Automate reports, briefs, audits, and client updates. What takes your team 8 hours today can run overnight — automatically.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon" style="background:rgba(16,185,129,0.1);">💰</div>
+        <h3 class="benefit-title">Increase Profit Per Client</h3>
+        <p class="benefit-desc">Charge the same (or more) while slashing delivery costs. Our students average 40% higher margins within 90 days.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon" style="background:rgba(59,130,246,0.1);">🤖</div>
+        <h3 class="benefit-title">Build Real AI Workflows</h3>
+        <p class="benefit-desc">No fluff, no theory. You'll build copy-paste automation flows that work in your actual client stack from day one.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon" style="background:rgba(139,92,246,0.1);">📈</div>
+        <h3 class="benefit-title">Scale Without Headcount</h3>
+        <p class="benefit-desc">Handle 2× the clients with the same team. AI acts as your invisible ops layer — always on, never sick, never expensive.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon" style="background:rgba(6,182,212,0.1);">🛡️</div>
+        <h3 class="benefit-title">Future-Proof Your Agency</h3>
+        <p class="benefit-desc">Agencies that don't adopt AI will be undercut on price and speed within 18 months. Get ahead before it's a crisis.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon" style="background:rgba(245,166,35,0.1);">🎯</div>
+        <h3 class="benefit-title">Retain Clients Longer</h3>
+        <p class="benefit-desc">Better reporting, faster turnarounds, and proactive AI insights make your agency sticky — and referrals effortless.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SOCIAL PROOF ───────────────────────────────────────────────────── -->
+<section id="proof">
+  <div class="container">
+    <div class="proof-header">
+      <p class="section-label">Real Results</p>
+      <h2 class="section-title">Agency Owners Are Winning With AI</h2>
+      <p class="section-sub">These aren't edge cases. These are normal outcomes for students who follow the system.</p>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-item">
+        <div class="stat-num">2,400+</div>
+        <div class="stat-desc">Agency owners enrolled</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">40%</div>
+        <div class="stat-desc">Average margin improvement</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">23h</div>
+        <div class="stat-desc">Average hours saved per week</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">4.9★</div>
+        <div class="stat-desc">Average student rating</div>
+      </div>
+    </div>
+
+    <div class="testimonials-grid">
+      <div class="tcard featured">
+        <div class="tcard-stars">
+          <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+        </div>
+        <div class="tcard-quote">"</div>
+        <p class="tcard-text">We went from 8 clients to 19 in four months without hiring anyone new. The automation stack I built in Module 3 alone saves us 30+ hours a week. This is the best investment I've made in my business — period.</p>
+        <div class="tcard-author">
+          <div class="tcard-avatar" style="background: linear-gradient(135deg,#f5a623,#ef4444);">MK</div>
+          <div>
+            <div class="tcard-name">Marcus K.</div>
+            <div class="tcard-role">Founder, Kinetic Digital — $2.1M agency</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tcard">
+        <div class="tcard-stars">
+          <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+        </div>
+        <div class="tcard-quote">"</div>
+        <p class="tcard-text">I was sceptical because I'm not technical at all. Three weeks in, I had automated client onboarding, proposal generation, and reporting running. My team was shocked. I was shocked.</p>
+        <div class="tcard-author">
+          <div class="tcard-avatar" style="background: linear-gradient(135deg,#3b82f6,#06b6d4);">JR</div>
+          <div>
+            <div class="tcard-name">Jessica R.</div>
+            <div class="tcard-role">Owner, Radiant Social Media</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tcard">
+        <div class="tcard-stars">
+          <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+        </div>
+        <div class="tcard-quote">"</div>
+        <p class="tcard-text">Recovered the cost of this course in week one. Literally. I automated our monthly SEO reports and freed up 12 hours of contractor time immediately. The ROI is absurd.</p>
+        <div class="tcard-author">
+          <div class="tcard-avatar" style="background: linear-gradient(135deg,#10b981,#8b5cf6);">AL</div>
+          <div>
+            <div class="tcard-name">Amir L.</div>
+            <div class="tcard-role">Co-founder, Amplify Agency</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tcard">
+        <div class="tcard-stars">
+          <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+        </div>
+        <div class="tcard-quote">"</div>
+        <p class="tcard-text">The private community alone is worth the price. Everyone is sharing templates, automations, and real wins. It's the highest-quality group of agency owners I've ever been part of.</p>
+        <div class="tcard-author">
+          <div class="tcard-avatar" style="background: linear-gradient(135deg,#8b5cf6,#ef4444);">SP</div>
+          <div>
+            <div class="tcard-name">Sophie P.</div>
+            <div class="tcard-role">Director, Pinnacle Creative</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tcard">
+        <div class="tcard-stars">
+          <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+        </div>
+        <div class="tcard-quote">"</div>
+        <p class="tcard-text">I hired three people last year to handle growth. After AgencyAI Mastery, I let one go and grew revenue 60%. Painful truth, incredible outcome. AI is doing the work of a full-time employee.</p>
+        <div class="tcard-author">
+          <div class="tcard-avatar" style="background: linear-gradient(135deg,#f5a623,#10b981);">TD</div>
+          <div>
+            <div class="tcard-name">Tom D.</div>
+            <div class="tcard-role">CEO, Demand Factory</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tcard">
+        <div class="tcard-stars">
+          <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+        </div>
+        <div class="tcard-quote">"</div>
+        <p class="tcard-text">Finally an AI course that's built for people who run actual businesses — not developers. Every lesson has a direct application. I finished Module 5 and launched the automation the same day.</p>
+        <div class="tcard-author">
+          <div class="tcard-avatar" style="background: linear-gradient(135deg,#06b6d4,#3b82f6);">NW</div>
+          <div>
+            <div class="tcard-name">Nina W.</div>
+            <div class="tcard-role">Founder, Wavelength Media</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── MODULES ────────────────────────────────────────────────────────── -->
+<section id="modules">
+  <div class="container">
+    <div class="modules-header">
+      <p class="section-label">The Curriculum</p>
+      <h2 class="section-title">8 Modules. Zero Fluff.<br />Pure Implementation.</h2>
+      <p class="section-sub" style="margin-top:12px;">Every module ends with a working automation you can deploy in your agency immediately.</p>
+    </div>
+
+    <div class="modules-layout">
+      <!-- Sidebar nav -->
+      <div class="modules-sidebar">
+        <div class="module-nav">
+          <div class="module-nav-item active"><div class="module-num">01</div><div class="module-nav-label">AI Agency Foundations</div></div>
+          <div class="module-nav-item"><div class="module-num">02</div><div class="module-nav-label">Prompt Engineering for Agencies</div></div>
+          <div class="module-nav-item"><div class="module-num">03</div><div class="module-nav-label">Client Delivery Automation</div></div>
+          <div class="module-nav-item"><div class="module-num">04</div><div class="module-nav-label">Sales & Proposal Systems</div></div>
+          <div class="module-nav-item"><div class="module-num">05</div><div class="module-nav-label">Reporting & Analytics AI</div></div>
+          <div class="module-nav-item"><div class="module-num">06</div><div class="module-nav-label">Client Communication Flows</div></div>
+          <div class="module-nav-item"><div class="module-num">07</div><div class="module-nav-label">Hiring & Team Augmentation</div></div>
+          <div class="module-nav-item"><div class="module-num">08</div><div class="module-nav-label">Scaling to $1M+ with AI</div></div>
+        </div>
+      </div>
+
+      <!-- Cards -->
+      <div class="modules-cards">
+
+        <div class="module-card">
+          <div class="module-icon-box">🧱</div>
+          <div>
+            <div class="module-card-num">Module 01</div>
+            <h3 class="module-card-title">AI Agency Foundations</h3>
+            <p class="module-card-desc">Map your current agency workflows and identify the highest-ROI automation opportunities. Build your AI tech stack on a budget and understand the principles that separate real automation from hype.</p>
+            <div class="module-lessons">
+              <span class="lesson-tag">Workflow Audit</span>
+              <span class="lesson-tag">Tool Selection</span>
+              <span class="lesson-tag">ROI Calculator</span>
+              <span class="lesson-tag">AI Ethics for Agencies</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="module-card">
+          <div class="module-icon-box">🧠</div>
+          <div>
+            <div class="module-card-num">Module 02</div>
+            <h3 class="module-card-title">Prompt Engineering for Agency Work</h3>
+            <p class="module-card-desc">Master the prompting techniques that produce client-ready output, not drafts that need heavy editing. Build a reusable prompt library your whole team can access.</p>
+            <div class="module-lessons">
+              <span class="lesson-tag">Chain-of-Thought Prompting</span>
+              <span class="lesson-tag">Role Framing</span>
+              <span class="lesson-tag">Prompt Templates</span>
+              <span class="lesson-tag">Quality Control</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="module-card">
+          <div class="module-icon-box">⚙️</div>
+          <div>
+            <div class="module-card-num">Module 03</div>
+            <h3 class="module-card-title">Client Delivery Automation</h3>
+            <p class="module-card-desc">Build end-to-end automations for your most time-consuming deliverables — content creation, SEO audits, ad copy, social calendars, and more. Ship the same quality in a fraction of the time.</p>
+            <div class="module-lessons">
+              <span class="lesson-tag">Content Pipelines</span>
+              <span class="lesson-tag">SEO Automation</span>
+              <span class="lesson-tag">Ad Creative at Scale</span>
+              <span class="lesson-tag">Make.com Flows</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="module-card">
+          <div class="module-icon-box">💼</div>
+          <div>
+            <div class="module-card-num">Module 04</div>
+            <h3 class="module-card-title">Sales & Proposal Systems</h3>
+            <p class="module-card-desc">Automate lead qualification, discovery call preparation, custom proposal generation, and follow-up sequences. Close more deals with less manual effort.</p>
+            <div class="module-lessons">
+              <span class="lesson-tag">Lead Scoring AI</span>
+              <span class="lesson-tag">Auto-Proposals</span>
+              <span class="lesson-tag">CRM Integration</span>
+              <span class="lesson-tag">Follow-up Flows</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="module-card">
+          <div class="module-icon-box">📊</div>
+          <div>
+            <div class="module-card-num">Module 05</div>
+            <h3 class="module-card-title">Reporting & Analytics AI</h3>
+            <p class="module-card-desc">Build automated client reporting that pulls live data, generates AI commentary, and delivers polished reports — without anyone touching a spreadsheet.</p>
+            <div class="module-lessons">
+              <span class="lesson-tag">Data Aggregation</span>
+              <span class="lesson-tag">AI Commentary</span>
+              <span class="lesson-tag">Scheduled Delivery</span>
+              <span class="lesson-tag">White-label Reports</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="module-card">
+          <div class="module-icon-box">💬</div>
+          <div>
+            <div class="module-card-num">Module 06</div>
+            <h3 class="module-card-title">Client Communication Flows</h3>
+            <p class="module-card-desc">Set up AI-assisted Slack, email, and SMS communication flows that handle status updates, approval requests, and check-ins — keeping clients happy without consuming your team's time.</p>
+            <div class="module-lessons">
+              <span class="lesson-tag">Status Automations</span>
+              <span class="lesson-tag">Approval Requests</span>
+              <span class="lesson-tag">Sentiment Monitoring</span>
+              <span class="lesson-tag">Churn Prevention</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="module-card">
+          <div class="module-icon-box">👥</div>
+          <div>
+            <div class="module-card-num">Module 07</div>
+            <h3 class="module-card-title">Hiring & Team Augmentation</h3>
+            <p class="module-card-desc">Use AI to hire smarter, train faster, and augment your existing team so every person operates at a senior level. Reduce hiring mistakes and onboarding time by 60%.</p>
+            <div class="module-lessons">
+              <span class="lesson-tag">AI-Assisted Hiring</span>
+              <span class="lesson-tag">SOPs with AI</span>
+              <span class="lesson-tag">Training Automation</span>
+              <span class="lesson-tag">Performance Tracking</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="module-card">
+          <div class="module-icon-box">🚀</div>
+          <div>
+            <div class="module-card-num">Module 08</div>
+            <h3 class="module-card-title">Scaling to $1M+ with AI</h3>
+            <p class="module-card-desc">The full playbook for hitting 7 figures — productised services, AI-powered lead gen, strategic positioning, and building a business that doesn't depend on you showing up every day.</p>
+            <div class="module-lessons">
+              <span class="lesson-tag">Productised Services</span>
+              <span class="lesson-tag">AI Lead Gen</span>
+              <span class="lesson-tag">Positioning</span>
+              <span class="lesson-tag">Exit Optionality</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PRICING ────────────────────────────────────────────────────────── -->
+<section id="pricing">
+  <div class="container">
+    <div class="pricing-header">
+      <p class="section-label">Simple Pricing</p>
+      <h2 class="section-title">Choose Your Path to Automation</h2>
+    </div>
+
+    <div class="pricing-toggle">
+      <span>Monthly</span>
+      <div class="toggle-switch on" id="toggle" onclick="this.classList.toggle('on')">
+        <div class="toggle-knob"></div>
+      </div>
+      <span>Annual</span>
+      <span class="save-pill">Save 40%</span>
+    </div>
+
+    <div class="pricing-grid">
+
+      <!-- Starter -->
+      <div class="price-card">
+        <div class="plan-name">Starter</div>
+        <div class="plan-price">
+          <span class="plan-currency">$</span>
+          <span class="plan-amount">497</span>
+        </div>
+        <p class="plan-desc">Lifetime access. Perfect for solo agency owners ready to start automating.</p>
+        <hr class="plan-divider" />
+        <div class="plan-features">
+          <div class="plan-feature"><div class="feat-icon yes">✓</div><span>All 8 course modules</span></div>
+          <div class="plan-feature"><div class="feat-icon yes">✓</div><span>50+ automation templates</span></div>
+          <div class="plan-feature"><div class="feat-icon yes">✓</div><span>Private community access</span></div>
+          <div class="plan-feature"><div class="feat-icon yes">✓</div><span>6 months of updates</span></div>
+          <div class="plan-feature"><div class="feat-icon no">–</div><span style="color:var(--text-dim)">Live Q&A calls</span></div>
+          <div class="plan-feature"><div class="feat-icon no">–</div><span style="color:var(--text-dim)">1-on-1 audit session</span></div>
+          <div class="plan-feature"><div class="feat-icon no">–</div><span style="color:var(--text-dim)">Done-for-you templates</span></div>
+        </div>
+        <a href="#" class="btn plan-btn ghost">Get Started</a>
+      </div>
+
+      <!-- Pro — Popular -->
+      <div class="price-card popular">
+        <div class="popular-badge">⭐ Most Popular</div>
+        <div class="plan-name">Pro</div>
+        <div class="plan-price">
+          <span class="plan-currency">$</span>
+          <span class="plan-amount">997</span>
+        </div>
+        <p class="plan-desc">Everything you need to fully automate your agency and scale past $500K.</p>
+        <hr class="plan-divider" />
+        <div class="plan-features">
+          <div class="plan-feature"><div class="feat-icon gold">✓</div><span>All 8 course modules</span></div>
+          <div class="plan-feature"><div class="feat-icon gold">✓</div><span>100+ automation templates</span></div>
+          <div class="plan-feature"><div class="feat-icon gold">✓</div><span>Private community access</span></div>
+          <div class="plan-feature"><div class="feat-icon gold">✓</div><span>Lifetime updates</span></div>
+          <div class="plan-feature"><div class="feat-icon gold">✓</div><span>Weekly live Q&A calls</span></div>
+          <div class="plan-feature"><div class="feat-icon gold">✓</div><span>1 × 60-min agency audit</span></div>
+          <div class="plan-feature"><div class="feat-icon no">–</div><span style="color:var(--text-dim)">Done-for-you build</span></div>
+        </div>
+        <a href="#" class="btn btn-primary plan-btn">Enroll Now →</a>
+      </div>
+
+      <!-- Agency Elite -->
+      <div class="price-card">
+        <div class="plan-name">Agency Elite</div>
+        <div class="plan-price">
+          <span class="plan-currency">$</span>
+          <span class="plan-amount">2,497</span>
+        </div>
+        <p class="plan-desc">Full white-glove experience with custom automation builds for your agency.</p>
+        <hr class="plan-divider" />
+        <div class="plan-features">
+          <div class="plan-feature"><div class="feat-icon yes">✓</div><span>Everything in Pro</span></div>
+          <div class="plan-feature"><div class="feat-icon yes">✓</div><span>3 × DFY automation builds</span></div>
+          <div class="plan-feature"><div class="feat-icon yes">✓</div><span>Priority Slack support</span></div>
+          <div class="plan-feature"><div class="feat-icon yes">✓</div><span>Monthly strategy calls</span></div>
+          <div class="plan-feature"><div class="feat-icon yes">✓</div><span>Agency SOP library</span></div>
+          <div class="plan-feature"><div class="feat-icon yes">✓</div><span>Team seats (up to 5)</span></div>
+          <div class="plan-feature"><div class="feat-icon yes">✓</div><span>Revenue-share blueprint</span></div>
+        </div>
+        <a href="#" class="btn plan-btn ghost">Apply for Elite →</a>
+      </div>
+
+    </div>
+
+    <div class="guarantee-row">
+      <span class="guarantee-icon">🔒</span>
+      <span><strong style="color:var(--text)">30-Day Money-Back Guarantee.</strong> If you do the work and don't see results, we'll refund every cent. No questions asked.</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── FAQ ────────────────────────────────────────────────────────────── -->
+<section id="faq">
+  <div class="container">
+    <div class="faq-header">
+      <p class="section-label">FAQ</p>
+      <h2 class="section-title">Frequently Asked Questions</h2>
+      <p class="section-sub">Still on the fence? These are the questions we hear most often.</p>
+    </div>
+
+    <div class="faq-grid">
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Do I need to be technical to take this course?
+          <div class="faq-chevron">▾</div>
+        </div>
+        <div class="faq-a">Not at all. AgencyAI Mastery is built for business owners, not developers. Every tool we use has a visual, drag-and-drop interface. If you can use Google Docs, you can build these automations.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          What type of agency is this built for?
+          <div class="faq-chevron">▾</div>
+        </div>
+        <div class="faq-a">Any service-based agency — digital marketing, SEO, PPC, social media, PR, creative, web design. If you deliver client work and want to do it faster with higher margins, this course applies to you.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          How long until I see results?
+          <div class="faq-chevron">▾</div>
+        </div>
+        <div class="faq-a">Most students deploy their first automation in week one. Meaningful time savings — 10+ hours per week — typically show up within 30 days. The full stack takes 60–90 days to build, at which point the ROI becomes obvious.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Is this just about ChatGPT?
+          <div class="faq-chevron">▾</div>
+        </div>
+        <div class="faq-a">No. ChatGPT is one tool in a much larger stack. You'll work with Make.com, n8n, Zapier, Airtable, Slack, Claude, and several specialised AI tools. The focus is on connecting these tools into workflows, not just prompting a chatbot.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          What's included with lifetime access?
+          <div class="faq-chevron">▾</div>
+        </div>
+        <div class="faq-a">All current modules, all future updates, the full template library, and access to the private community — forever. As AI tools evolve, we update the curriculum. You pay once and stay current.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Can my team access the course?
+          <div class="faq-chevron">▾</div>
+        </div>
+        <div class="faq-a">Starter and Pro plans are single-user licences. Agency Elite includes up to 5 team seats. For larger teams, contact us for a group rate — we work with agencies of all sizes.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          How does the money-back guarantee work?
+          <div class="faq-chevron">▾</div>
+        </div>
+        <div class="faq-a">Simple: complete the first four modules, implement the automations, and if you haven't saved at least 5 hours per week within 30 days, email us and we'll refund you in full. We've never had to issue a refund — but the safety net is real.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          When does the next cohort start?
+          <div class="faq-chevron">▾</div>
+        </div>
+        <div class="faq-a">Cohort 4 opens now and closes when seats fill. The course is self-paced but live Q&A calls happen weekly and cohorts create accountability. We enrol new cohorts every quarter — join now to lock in current pricing.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── FINAL CTA ───────────────────────────────────────────────────────── -->
+<section id="cta">
+  <div class="cta-glow"></div>
+  <div class="container">
+    <div class="cta-box">
+      <div class="badge" style="margin-bottom:24px;">Limited Spots — Cohort 4</div>
+      <h2 class="cta-title">
+        Your Agency Can Run Smarter.<br />
+        <span style="background:linear-gradient(135deg,#f5a623,#fbbf24);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Start This Week.</span>
+      </h2>
+      <p class="cta-sub">
+        Join 2,400+ agency owners who've stopped trading time for money and built an AI-powered operation that scales.
+      </p>
+      <div class="cta-actions">
+        <a href="#pricing" class="btn btn-primary" style="font-size:16px;padding:18px 38px;">Enroll in AgencyAI Mastery →</a>
+        <a href="#modules" class="btn btn-outline">View the Curriculum</a>
+      </div>
+      <p class="cta-note">🔒 30-day money-back guarantee &nbsp;·&nbsp; Instant access &nbsp;·&nbsp; Lifetime updates</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ─────────────────────────────────────────────────────────── -->
+<footer>
+  <div class="container footer-inner">
+    <div class="nav-logo">
+      <div class="logo-icon">⚡</div>
+      AgencyAI Mastery
+    </div>
+    <p class="footer-copy">© 2026 AgencyAI Mastery. All rights reserved.</p>
+    <div class="footer-links">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+      <a href="#">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Nav scroll effect
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 40);
+  });
+
+  // FAQ accordion
+  function toggleFaq(el) {
+    const item = el.parentElement;
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  }
+
+  // Open first FAQ by default
+  document.querySelector('.faq-item')?.classList.add('open');
+</script>
+</body>
+</html>
