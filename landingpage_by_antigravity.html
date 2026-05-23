@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Automation for Agencies | Premium Course</title>
+    <meta name="description" content="Scale your agency with AI. Learn to automate client work, save time, and increase profit margins." />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Outfit:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+      /* Custom Properties / Variables */
+      :root {
+        --color-bg: #05050A; /* Extremely dark blue/black */
+        --color-surface: rgba(255, 255, 255, 0.03);
+        --color-surface-hover: rgba(255, 255, 255, 0.06);
+        --color-border: rgba(255, 255, 255, 0.08);
+        
+        --color-text-primary: #ffffff;
+        --color-text-secondary: #a1a1aa;
+        
+        --color-primary: #6366f1; /* Indigo */
+        --color-primary-glow: rgba(99, 102, 241, 0.5);
+        --color-secondary: #a855f7; /* Purple */
+        
+        --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+        --font-display: 'Outfit', var(--font-sans);
+        
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      /* Reset & Base Styles */
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        font-size: 16px;
+      }
+
+      body {
+        font-family: var(--font-sans);
+        background-color: var(--color-bg);
+        color: var(--color-text-primary);
+        line-height: 1.6;
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      h1, h2, h3, h4, .logo, .tier-name, .module-number {
+        font-family: var(--font-display);
+        line-height: 1.2;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+        transition: var(--transition);
+      }
+
+      .container {
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+      }
+
+      /* Utilities */
+      .text-gradient {
+        background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .glass {
+        background: var(--color-surface);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid var(--color-border);
+        border-radius: 1rem;
+      }
+
+      .grid {
+        display: grid;
+        gap: 2rem;
+      }
+
+      .section-title {
+        font-size: 2.5rem;
+        text-align: center;
+        margin-bottom: 1rem;
+      }
+
+      .section-subtitle {
+        text-align: center;
+        color: var(--color-text-secondary);
+        font-size: 1.125rem;
+        max-width: 600px;
+        margin: 0 auto 3rem auto;
+      }
+
+      /* Buttons */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+        font-family: var(--font-display);
+      }
+
+      .btn-sm {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+      }
+
+      .btn-lg {
+        padding: 1rem 2rem;
+        font-size: 1.125rem;
+        border-radius: 0.75rem;
+      }
+
+      .btn-full {
+        width: 100%;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+        color: white;
+        border: none;
+        box-shadow: 0 4px 14px 0 var(--color-primary-glow);
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px 0 var(--color-primary-glow);
+      }
+
+      .btn-outline {
+        background: transparent;
+        border: 1px solid var(--color-border);
+        color: var(--color-text-primary);
+      }
+
+      .btn-outline:hover {
+        background: var(--color-surface-hover);
+        border-color: rgba(255,255,255,0.2);
+      }
+
+      /* Navbar */
+      .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        background: rgba(5, 5, 10, 0.8);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--color-border);
+      }
+
+      .nav-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 4.5rem;
+      }
+
+      .logo {
+        font-size: 1.5rem;
+        font-weight: 700;
+        letter-spacing: -0.025em;
+      }
+
+      .navbar nav {
+        display: flex;
+        gap: 2rem;
+      }
+
+      .navbar nav a {
+        color: var(--color-text-secondary);
+        font-size: 0.9375rem;
+        font-weight: 500;
+      }
+
+      .navbar nav a:hover {
+        color: var(--color-text-primary);
+      }
+
+      @media (max-width: 768px) {
+        .navbar nav {
+          display: none;
+        }
+      }
+
+      /* Hero Section */
+      .hero, .final-cta {
+        position: relative;
+        padding: 10rem 0 6rem 0;
+        text-align: center;
+        overflow: hidden;
+      }
+
+      .hero-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: -1;
+      }
+
+      .glow {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(100px);
+        opacity: 0.4;
+        z-index: -1;
+      }
+
+      .glow-1 {
+        background: var(--color-primary);
+        width: 400px;
+        height: 400px;
+        top: -100px;
+        left: 10%;
+      }
+
+      .glow-2 {
+        background: var(--color-secondary);
+        width: 400px;
+        height: 400px;
+        top: 20%;
+        right: 10%;
+      }
+
+      .badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        background: rgba(99, 102, 241, 0.1);
+        border: 1px solid rgba(99, 102, 241, 0.2);
+        color: #818cf8;
+        border-radius: 2rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+      }
+
+      .hero h1 {
+        font-size: 4rem;
+        letter-spacing: -0.02em;
+        margin-bottom: 1.5rem;
+        max-width: 900px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .hero .subheadline {
+        font-size: 1.25rem;
+        color: var(--color-text-secondary);
+        max-width: 700px;
+        margin: 0 auto 2.5rem auto;
+      }
+
+      .hero-cta {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-bottom: 3rem;
+      }
+
+      @media (max-width: 640px) {
+        .hero h1 {
+          font-size: 2.5rem;
+        }
+        .hero-cta {
+          flex-direction: column;
+        }
+      }
+
+      .hero-social-proof {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+      }
+
+      .avatars {
+        display: flex;
+      }
+
+      .avatars img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 2px solid var(--color-bg);
+        margin-left: -10px;
+      }
+
+      .avatars img:first-child {
+        margin-left: 0;
+      }
+
+      .hero-social-proof p {
+        color: var(--color-text-secondary);
+        font-size: 0.875rem;
+      }
+
+      /* Logo Cloud */
+      .logo-cloud {
+        padding: 2rem 0;
+        border-top: 1px solid var(--color-border);
+        border-bottom: 1px solid var(--color-border);
+        text-align: center;
+        background: rgba(255,255,255,0.01);
+      }
+
+      .logo-cloud p {
+        color: var(--color-text-secondary);
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 1.5rem;
+      }
+
+      .logos {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 4rem;
+        opacity: 0.5;
+      }
+
+      .logo-item {
+        font-family: var(--font-display);
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #fff;
+        letter-spacing: -0.02em;
+      }
+
+      /* Sections Global */
+      section {
+        padding: 6rem 0;
+      }
+
+      /* Benefits Section */
+      .benefits-grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      }
+
+      .card {
+        padding: 2.5rem;
+        transition: var(--transition);
+      }
+
+      .card:hover {
+        transform: translateY(-5px);
+        background: var(--color-surface-hover);
+        border-color: rgba(255,255,255,0.15);
+      }
+
+      .card-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .card h3 {
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+      }
+
+      .card p {
+        color: var(--color-text-secondary);
+        font-size: 0.9375rem;
+      }
+
+      /* Testimonials */
+      .testimonials-grid {
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      }
+
+      @media (max-width: 768px) {
+        .testimonials-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .testimonial-card {
+        padding: 2.5rem;
+      }
+
+      .stars {
+        color: #fbbf24; /* Amber */
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+      }
+
+      .quote {
+        font-size: 1.125rem;
+        font-style: italic;
+        margin-bottom: 2rem;
+      }
+
+      .author {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .author img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+      }
+
+      .author h4 {
+        font-size: 1rem;
+      }
+
+      .author p {
+        color: var(--color-text-secondary);
+        font-size: 0.875rem;
+      }
+
+      /* Modules Section */
+      .module-list {
+        max-width: 800px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+
+      .module-item {
+        padding: 2rem;
+        transition: var(--transition);
+      }
+
+      .module-item:hover {
+        border-color: rgba(99, 102, 241, 0.4);
+        box-shadow: 0 0 20px rgba(99, 102, 241, 0.1);
+      }
+
+      .module-header {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        margin-bottom: 1rem;
+      }
+
+      .module-number {
+        font-size: 2rem;
+        color: var(--color-primary);
+        opacity: 0.8;
+      }
+
+      .module-header h3 {
+        font-size: 1.5rem;
+      }
+
+      .module-body p {
+        color: var(--color-text-secondary);
+      }
+
+      /* Pricing */
+      .pricing-grid {
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        max-width: 900px;
+        margin: 0 auto;
+      }
+
+      .pricing-card {
+        padding: 3rem 2rem;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .pricing-card.popular {
+        border-color: var(--color-primary);
+        background: linear-gradient(to bottom, rgba(99,102,241,0.05), transparent);
+      }
+
+      .popular-badge {
+        position: absolute;
+        top: -12px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--color-primary);
+        color: #fff;
+        padding: 0.25rem 1rem;
+        border-radius: 2rem;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .tier-name {
+        font-size: 1.25rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .price {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        font-family: var(--font-display);
+      }
+
+      .price span {
+        font-size: 1.5rem;
+        vertical-align: super;
+        color: var(--color-text-secondary);
+      }
+
+      .tier-desc {
+        color: var(--color-text-secondary);
+        margin-bottom: 2rem;
+        min-height: 48px;
+      }
+
+      .features {
+        list-style: none;
+        margin-bottom: 2.5rem;
+        flex-grow: 1;
+      }
+
+      .features li {
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .features li::before {
+        content: '✓';
+        color: var(--color-primary);
+        font-weight: bold;
+      }
+
+      /* FAQ Section */
+      .faq-accordion {
+        max-width: 800px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .faq-item {
+        overflow: hidden;
+      }
+
+      .faq-question {
+        width: 100%;
+        text-align: left;
+        padding: 1.5rem;
+        background: transparent;
+        border: none;
+        color: var(--color-text-primary);
+        font-size: 1.125rem;
+        font-weight: 600;
+        font-family: var(--font-sans);
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .faq-question:hover {
+        color: var(--color-primary);
+      }
+
+      .faq-question .icon {
+        font-size: 1.5rem;
+        font-weight: 300;
+        transition: transform 0.3s ease;
+      }
+
+      .faq-answer {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+        padding: 0 1.5rem;
+      }
+
+      .faq-answer p {
+        color: var(--color-text-secondary);
+        padding-bottom: 1.5rem;
+      }
+
+      .faq-item.active .faq-answer {
+        max-height: 200px; /* arbitrary large enough value */
+      }
+
+      .faq-item.active .icon {
+        transform: rotate(45deg);
+      }
+
+      /* Final CTA */
+      .final-cta {
+        padding: 8rem 0;
+        border-top: 1px solid var(--color-border);
+      }
+
+      .final-cta h2 {
+        font-size: 3rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .final-cta p {
+        font-size: 1.25rem;
+        color: var(--color-text-secondary);
+        max-width: 600px;
+        margin: 0 auto 2.5rem auto;
+      }
+
+      /* Footer */
+      .footer {
+        border-top: 1px solid var(--color-border);
+        padding: 4rem 0 2rem 0;
+        background: #020205;
+      }
+
+      .footer-content {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 3rem;
+        margin-bottom: 3rem;
+      }
+
+      .footer-brand .logo {
+        margin-bottom: 1rem;
+      }
+
+      .footer-brand p {
+        color: var(--color-text-secondary);
+        max-width: 300px;
+      }
+
+      .footer-links {
+        display: flex;
+        gap: 4rem;
+      }
+
+      .link-group h4 {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .link-group a {
+        display: block;
+        color: var(--color-text-secondary);
+        margin-bottom: 0.75rem;
+        font-size: 0.9375rem;
+      }
+
+      .link-group a:hover {
+        color: var(--color-primary);
+      }
+
+      .footer-bottom {
+        text-align: center;
+        color: var(--color-text-secondary);
+        font-size: 0.875rem;
+        border-top: 1px solid var(--color-border);
+        padding-top: 2rem;
+      }
+
+      /* Animations */
+      .animate-on-scroll {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.6s ease, transform 0.6s ease;
+      }
+
+      .animate-on-scroll.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header / Nav -->
+    <header class="navbar">
+      <div class="container nav-content">
+        <div class="logo">AgencyAI.</div>
+        <nav>
+          <a href="#benefits">Benefits</a>
+          <a href="#modules">Curriculum</a>
+          <a href="#pricing">Pricing</a>
+          <a href="#faq">FAQ</a>
+        </nav>
+        <a href="#pricing" class="btn btn-primary btn-sm">Enroll Now</a>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-bg">
+        <div class="glow glow-1"></div>
+        <div class="glow glow-2"></div>
+      </div>
+      <div class="container hero-content">
+        <div class="badge">New: 2026 Edition</div>
+        <h1>Scale Your Agency with AI, <span class="text-gradient">Without Adding Headcount.</span></h1>
+        <p class="subheadline">The proven blueprint for agency owners to automate client delivery, save 20+ hours a week, and double their profit margins using advanced AI workflows.</p>
+        <div class="hero-cta">
+          <a href="#pricing" class="btn btn-primary btn-lg">Get Instant Access</a>
+          <a href="#modules" class="btn btn-outline btn-lg">View Curriculum</a>
+        </div>
+        <div class="hero-social-proof">
+          <div class="avatars">
+            <img src="https://i.pravatar.cc/100?img=1" alt="Student" />
+            <img src="https://i.pravatar.cc/100?img=2" alt="Student" />
+            <img src="https://i.pravatar.cc/100?img=3" alt="Student" />
+            <img src="https://i.pravatar.cc/100?img=4" alt="Student" />
+          </div>
+          <p>Join 500+ agency owners scaling with AI.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Logo Cloud / Social Proof -->
+    <section class="logo-cloud">
+      <div class="container">
+        <p>Strategies used by top agencies at:</p>
+        <div class="logos">
+          <div class="logo-item">AcmeCorp</div>
+          <div class="logo-item">GlobalReach</div>
+          <div class="logo-item">NexusDigital</div>
+          <div class="logo-item">ApexMedia</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section id="benefits" class="benefits">
+      <div class="container">
+        <h2 class="section-title">Stop Trading Time for Money.</h2>
+        <p class="section-subtitle">Implement AI systems that work 24/7, so you can focus on strategy and growth.</p>
+        
+        <div class="grid benefits-grid">
+          <div class="card glass">
+            <div class="card-icon">⚡</div>
+            <h3>10x Fulfillment Speed</h3>
+            <p>Automate repetitive tasks like reporting, onboarding, and content generation. Deliver results to clients faster than ever.</p>
+          </div>
+          <div class="card glass">
+            <div class="card-icon">📈</div>
+            <h3>Increase Profit Margins</h3>
+            <p>Scale your MRR without hiring expensive specialists. AI reduces overhead and increases the profit on every client retainer.</p>
+          </div>
+          <div class="card glass">
+            <div class="card-icon">🏖️</div>
+            <h3>Reclaim Your Time</h3>
+            <p>Remove yourself from the daily operations. Build systems that run your agency autonomously while you take back your weekends.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Social Proof / Testimonials Section -->
+    <section class="testimonials">
+      <div class="container">
+        <h2 class="section-title">Don't Just Take Our Word For It</h2>
+        <div class="grid testimonials-grid">
+          <div class="testimonial-card glass">
+            <div class="stars">★★★★★</div>
+            <p class="quote">"This course completely transformed my digital marketing agency. We integrated AI into our SEO delivery and cut our fulfillment time by 70%. Our margins have never been better."</p>
+            <div class="author">
+              <img src="https://i.pravatar.cc/100?img=5" alt="Sarah J." />
+              <div class="author-info">
+                <h4>Sarah Jenkins</h4>
+                <p>Founder, GrowthOps</p>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial-card glass">
+            <div class="stars">★★★★★</div>
+            <p class="quote">"The automation workflows provided in Module 3 paid for the course in the first week. I finally have time to focus on sales instead of putting out fires."</p>
+            <div class="author">
+              <img src="https://i.pravatar.cc/100?img=6" alt="Marcus T." />
+              <div class="author-info">
+                <h4>Marcus Thorne</h4>
+                <p>CEO, ScaleMedia</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Course Modules Section -->
+    <section id="modules" class="modules">
+      <div class="container">
+        <h2 class="section-title">What You'll Learn Inside</h2>
+        <p class="section-subtitle">A step-by-step framework to automate your agency from top to bottom.</p>
+        
+        <div class="module-list">
+          <div class="module-item glass">
+            <div class="module-header">
+              <div class="module-number">01</div>
+              <h3>AI Foundations & Prompt Engineering</h3>
+            </div>
+            <div class="module-body">
+              <p>Master the core principles of LLMs. Learn advanced prompt structures tailored specifically for agency tasks, ensuring high-quality, reliable outputs every time.</p>
+            </div>
+          </div>
+          <div class="module-item glass">
+            <div class="module-header">
+              <div class="module-number">02</div>
+              <h3>Automating Client Onboarding</h3>
+            </div>
+            <div class="module-body">
+              <p>Build no-code workflows that automatically generate contracts, collect assets, and set up project management boards the second a client pays their invoice.</p>
+            </div>
+          </div>
+          <div class="module-item glass">
+            <div class="module-header">
+              <div class="module-number">03</div>
+              <h3>AI-Powered Service Delivery</h3>
+            </div>
+            <div class="module-body">
+              <p>Plug-and-play systems for SEO, content creation, ad copywriting, and data analysis. Train AI agents to do the heavy lifting of your core services.</p>
+            </div>
+          </div>
+          <div class="module-item glass">
+            <div class="module-header">
+              <div class="module-number">04</div>
+              <h3>Outbound Lead Generation at Scale</h3>
+            </div>
+            <div class="module-body">
+              <p>Use AI to scrape, enrich, and hyper-personalize cold outreach. Book 10-15 qualified meetings a week without lifting a finger.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="pricing">
+      <div class="container">
+        <h2 class="section-title">Simple, Transparent Pricing</h2>
+        <p class="section-subtitle">Invest in systems that pay you back in time and profit.</p>
+        
+        <div class="grid pricing-grid">
+          <!-- Tier 1 -->
+          <div class="pricing-card glass">
+            <div class="tier-name">Standard</div>
+            <div class="price"><span>$</span>997</div>
+            <p class="tier-desc">Everything you need to start automating your agency.</p>
+            <ul class="features">
+              <li>Full Course Curriculum</li>
+              <li>50+ Copy-Paste AI Prompts</li>
+              <li>Automation Templates (Zapier/Make)</li>
+              <li>Lifetime Access & Updates</li>
+            </ul>
+            <a href="#" class="btn btn-outline btn-full">Enroll Standard</a>
+          </div>
+
+          <!-- Tier 2 -->
+          <div class="pricing-card glass popular">
+            <div class="popular-badge">Most Popular</div>
+            <div class="tier-name">Agency Pro</div>
+            <div class="price"><span>$</span>1,997</div>
+            <p class="tier-desc">For agencies ready to scale aggressively with AI.</p>
+            <ul class="features">
+              <li>Everything in Standard</li>
+              <li>Weekly Group Coaching Calls</li>
+              <li>Private Skool Community</li>
+              <li>Done-For-You AI Agency Workflows</li>
+              <li>1-on-1 Strategy Session</li>
+            </ul>
+            <a href="#" class="btn btn-primary btn-full">Enroll Agency Pro</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="faq">
+      <div class="container">
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        
+        <div class="faq-accordion">
+          <div class="faq-item glass">
+            <button class="faq-question">Do I need to know how to code? <span class="icon">+</span></button>
+            <div class="faq-answer">
+              <p>Not at all! We focus entirely on no-code tools like Zapier, Make, and intuitive AI interfaces. If you can use a web browser, you can build these automations.</p>
+            </div>
+          </div>
+          <div class="faq-item glass">
+            <button class="faq-question">What kind of agencies is this for? <span class="icon">+</span></button>
+            <div class="faq-answer">
+              <p>This course is perfect for Marketing, SEO, Design, Development, and PR agencies. The frameworks we teach can be adapted to almost any B2B service delivery model.</p>
+            </div>
+          </div>
+          <div class="faq-item glass">
+            <button class="faq-question">How long do I have access to the materials? <span class="icon">+</span></button>
+            <div class="faq-answer">
+              <p>You get lifetime access! AI moves fast, so we continuously update the course modules with the latest tools and strategies at no extra cost to existing students.</p>
+            </div>
+          </div>
+          <div class="faq-item glass">
+            <button class="faq-question">Is there a refund policy? <span class="icon">+</span></button>
+            <div class="faq-answer">
+              <p>Yes, we offer a 14-day action-based guarantee. If you implement the workflows and don't see a significant return on your time, we'll refund your investment.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Final CTA Section -->
+    <section class="final-cta">
+      <div class="hero-bg">
+        <div class="glow glow-1"></div>
+        <div class="glow glow-2"></div>
+      </div>
+      <div class="container final-cta-content">
+        <h2>Ready to Future-Proof Your Agency?</h2>
+        <p>Join the ranks of elite agency owners who use AI to work less and earn more. The old way of doing agency work is dying. Adapt and thrive today.</p>
+        <a href="#pricing" class="btn btn-primary btn-lg">Start Your AI Transformation</a>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container footer-content">
+        <div class="footer-brand">
+          <div class="logo">AgencyAI.</div>
+          <p>Empowering agencies with the tools of tomorrow.</p>
+        </div>
+        <div class="footer-links">
+          <div class="link-group">
+            <h4>Product</h4>
+            <a href="#modules">Curriculum</a>
+            <a href="#pricing">Pricing</a>
+            <a href="#faq">FAQ</a>
+          </div>
+          <div class="link-group">
+            <h4>Legal</h4>
+            <a href="#">Terms of Service</a>
+            <a href="#">Privacy Policy</a>
+          </div>
+        </div>
+      </div>
+      <div class="container footer-bottom">
+        <p>&copy; 2026 AgencyAI Course. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        // FAQ Accordion Logic
+        const faqItems = document.querySelectorAll('.faq-item');
+
+        faqItems.forEach(item => {
+          const question = item.querySelector('.faq-question');
+          
+          question.addEventListener('click', () => {
+            // Close other items
+            faqItems.forEach(otherItem => {
+              if (otherItem !== item && otherItem.classList.contains('active')) {
+                otherItem.classList.remove('active');
+              }
+            });
+            
+            // Toggle current item
+            item.classList.toggle('active');
+          });
+        });
+
+        // Smooth Scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+          anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            
+            const targetId = this.getAttribute('href');
+            if (targetId === '#') return;
+            
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+              // Scroll to element with an offset for the fixed navbar
+              const offset = 80;
+              const elementPosition = targetElement.getBoundingClientRect().top;
+              const offsetPosition = elementPosition + window.pageYOffset - offset;
+              
+              window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+              });
+            }
+          });
+        });
+
+        // Intersection Observer for scroll animations (fade-in)
+        const observerOptions = {
+          root: null,
+          rootMargin: '0px',
+          threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              // Stop observing once animated in
+              observer.unobserve(entry.target);
+            }
+          });
+        }, observerOptions);
+
+        // Add animate class to interesting elements and observe them
+        const animateElements = document.querySelectorAll('.card, .testimonial-card, .module-item, .pricing-card, .section-title');
+        animateElements.forEach(el => {
+          el.classList.add('animate-on-scroll');
+          observer.observe(el);
+        });
+      });
+    </script>
+  </body>
+</html>
