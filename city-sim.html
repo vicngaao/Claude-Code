@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIFireCity — Economic City Simulation</title>
+<style>
+  :root{
+    --bg1:#e7c98f; --bg2:#d8b87a; --ink:#3a3027; --muted:#8a7c66;
+    --card:#fffdf8; --card2:#f6efe1; --line:#e7dcc6; --line2:#efe7d6;
+    --accent:#e08a3c; --accent2:#caa84e; --good:#3f9d6b; --bad:#d2603a; --blue:#5b7fd6;
+    --shadow:0 6px 18px rgba(90,60,20,.18);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;color:var(--ink);
+    font:13px/1.45 -apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:linear-gradient(135deg,var(--bg1),var(--bg2));overflow:hidden}
+  #app{display:grid;grid-template-rows:auto 1fr 248px;height:100vh;gap:10px;padding:10px}
+
+  /* ---- top bar ---- */
+  header{display:flex;align-items:center;gap:14px;background:var(--card);
+    border-radius:14px;padding:9px 14px;box-shadow:var(--shadow)}
+  .logo{width:38px;height:38px;border-radius:9px;background:linear-gradient(150deg,#f0a94e,#dd7c2e);
+    display:grid;place-items:center;flex:none;box-shadow:inset 0 0 0 2px rgba(255,255,255,.35)}
+  .logo b{color:#fff;font-size:18px}
+  .brand h1{margin:0;font-size:17px;font-weight:800;letter-spacing:.2px}
+  .brand .sub{font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .chips{display:flex;gap:8px;flex-wrap:wrap}
+  .chip{background:var(--card2);border:1px solid var(--line);border-radius:9px;padding:4px 9px;
+    line-height:1.1}
+  .chip b{font-size:13px;font-variant-numeric:tabular-nums;display:block}
+  .chip small{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+  .spacer{flex:1}
+  .ctrls{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+  .btn{background:var(--card2);border:1px solid var(--line);color:var(--ink);border-radius:9px;
+    padding:7px 13px;cursor:pointer;font-size:12.5px;font-weight:600}
+  .btn:hover{border-color:var(--accent)}
+  .btn.warn:hover{border-color:var(--bad)}
+  .speed{display:flex;align-items:center;gap:7px;background:var(--card2);border:1px solid var(--line);
+    border-radius:9px;padding:5px 11px}
+  .speed input{accent-color:var(--accent);width:118px}
+  .speed .val{font-weight:700;font-variant-numeric:tabular-nums;min-width:34px;text-align:right}
+  .toggle{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;cursor:pointer;
+    background:var(--card2);border:1px solid var(--line);border-radius:9px;padding:6px 10px;user-select:none}
+  .toggle input{accent-color:var(--accent)}
+
+  /* ---- map ---- */
+  .mapwrap{position:relative;border-radius:14px;overflow:hidden;box-shadow:var(--shadow);background:#cdbb8e}
+  #map{display:block;width:100%;height:100%;cursor:grab}
+  #map.drag{cursor:grabbing}
+  .mapctl{position:absolute;right:12px;bottom:12px;display:flex;gap:8px;align-items:center;
+    background:rgba(255,253,248,.92);border:1px solid var(--line);border-radius:10px;padding:6px 10px;
+    font-size:11.5px;color:var(--muted);box-shadow:var(--shadow)}
+  .mapctl b{color:var(--ink)}
+  .mapctl .rb{background:var(--card2);border:1px solid var(--line);border-radius:7px;padding:4px 9px;
+    cursor:pointer;color:var(--ink);font-weight:600}
+  .mapctl .rb:hover{border-color:var(--accent)}
+  .legend{position:absolute;left:12px;top:12px;display:flex;gap:6px;flex-direction:column;
+    background:rgba(255,253,248,.9);border:1px solid var(--line);border-radius:10px;padding:8px 10px;
+    box-shadow:var(--shadow);font-size:11px}
+  .legend div{display:flex;align-items:center;gap:6px;color:var(--muted)}
+  .legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
+
+  /* ---- bottom panels ---- */
+  footer{display:grid;grid-template-columns:392px 1fr;gap:10px;min-height:0}
+  .panel{background:var(--card);border-radius:14px;box-shadow:var(--shadow);display:flex;
+    flex-direction:column;min-height:0;overflow:hidden}
+  .phead{padding:11px 14px 8px}
+  .phead .t{font-size:15px;font-weight:800}
+  .phead .s{font-size:11px;color:var(--muted)}
+  .tabs{display:flex;gap:5px;padding:0 12px 9px}
+  .tab{flex:1;text-align:center;padding:6px 4px;border-radius:9px;cursor:pointer;font-size:12px;
+    font-weight:700;color:var(--muted);border:1px solid transparent}
+  .tab:hover{background:var(--card2)}
+  .tab.on{background:var(--accent);color:#fff}
+  .list{overflow:auto;padding:0 8px 8px}
+  .item{display:flex;align-items:center;gap:10px;padding:8px 9px;border-radius:10px;cursor:pointer;
+    border:1px solid transparent}
+  .item:hover{background:var(--card2)}
+  .item.on{background:var(--card2);border-color:var(--accent)}
+  .dot{width:9px;height:9px;border-radius:50%;flex:none}
+  .item .nm{flex:1;min-width:0}
+  .item .nm b{font-size:12.5px;font-weight:700}
+  .item .nm small{display:block;color:var(--muted);font-size:10.5px;white-space:nowrap;overflow:hidden;
+    text-overflow:ellipsis}
+  .item .rt{text-align:right;font-variant-numeric:tabular-nums}
+  .item .rt b{font-size:12.5px}
+  .item .rt small{display:block;font-size:10px}
+  .pos{color:var(--good)} .neg{color:var(--bad)}
+
+  .detail{flex:1;min-height:0;position:relative;overflow:auto}
+  #detailCards{padding:14px 16px}
+  .hint{color:var(--muted);padding:40px 16px;text-align:center;font-size:13px}
+  .dhead{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .avatar{width:46px;height:46px;border-radius:11px;display:grid;place-items:center;color:#fff;
+    font-weight:800;font-size:16px;flex:none}
+  .dhead .who{flex:1;min-width:0}
+  .dhead .who .nm{font-size:18px;font-weight:800;line-height:1.1}
+  .dhead .who .role{color:var(--muted);font-size:12px}
+  .badge{font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;background:var(--card2);
+    border:1px solid var(--line);color:var(--ink)}
+  .trackbtn{font-size:11.5px;font-weight:700;padding:6px 13px;border-radius:9px;cursor:pointer;
+    border:1px solid var(--accent);color:var(--accent);background:transparent}
+  .trackbtn.on{background:var(--accent);color:#fff}
+  .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:14px}
+  .scard{background:var(--card2);border:1px solid var(--line);border-radius:11px;padding:10px 11px}
+  .scard .k{font-size:9.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:3px}
+  .scard .v{font-size:18px;font-weight:800;font-variant-numeric:tabular-nums}
+  .drow{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:9px}
+  .field .k{font-size:9.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
+  .field .v{font-size:13.5px;font-weight:600}
+  .bars{margin-top:6px}
+  .barrow{display:flex;align-items:center;gap:8px;margin:5px 0;font-size:11px}
+  .barrow span{width:74px;color:var(--muted)}
+  .bar{flex:1;height:8px;background:var(--line2);border-radius:5px;overflow:hidden}
+  .bar>i{display:block;height:100%;border-radius:5px}
+  .invrow{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--line2);font-size:12.5px}
+  .invrow span{color:var(--muted)}
+  .guide{font-size:13px;line-height:1.6}
+  .guide h4{margin:2px 0 6px;font-size:13px}
+  .guide b{color:var(--accent)}
+  #charts{display:none;width:100%;height:100%}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="logo"><b>▦</b></div>
+    <div class="brand">
+      <h1>AIFireCity</h1>
+      <div class="sub" id="subtitle">—</div>
+    </div>
+    <div class="chips" id="chips"></div>
+    <div class="spacer"></div>
+    <div class="ctrls">
+      <button class="btn" id="b-pause">⏸ Pause</button>
+      <button class="btn warn" id="b-regen">↻ Regenerate</button>
+      <div class="speed"><span>Speed</span>
+        <input id="spd" type="range" min="0.25" max="6" step="0.05" value="1">
+        <span class="val" id="spdval">1.0×</span></div>
+      <label class="toggle"><input type="checkbox" id="ly-roads" checked>Roads</label>
+      <label class="toggle"><input type="checkbox" id="ly-buildings" checked>Buildings</label>
+      <label class="toggle"><input type="checkbox" id="ly-life" checked>Life</label>
+    </div>
+  </header>
+
+  <div class="mapwrap">
+    <canvas id="map"></canvas>
+    <div class="legend">
+      <div><i style="background:#bcd49a"></i>Residential</div>
+      <div><i style="background:#a9c2d6"></i>Commercial</div>
+      <div><i style="background:#e08a3c"></i>Tracked resident</div>
+    </div>
+    <div class="mapctl"><span><b>Drag</b> to pan</span><span><b>Wheel</b> to zoom</span>
+      <span class="rb" id="b-reset">Reset view</span></div>
+  </div>
+
+  <footer>
+    <div class="panel">
+      <div class="phead"><div class="t" id="lhead-t">Residents</div><div class="s" id="lhead-s">—</div></div>
+      <div class="tabs">
+        <div class="tab on" data-view="residents">Residents</div>
+        <div class="tab" data-view="businesses">Businesses</div>
+        <div class="tab" data-view="charts">Charts</div>
+        <div class="tab" data-view="guide">Guide</div>
+      </div>
+      <div class="list" id="list"></div>
+    </div>
+    <div class="panel">
+      <div class="detail">
+        <div id="detailCards"></div>
+        <canvas id="charts"></canvas>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<script>
+"use strict";
+/* ============================================================================
+   AIFireCity — single-file economic city simulation (warm SimCity-style skin)
+   Simulation core is the verified closed-money economy; only the presentation
+   layer (map rendering, panels, camera, controls) is new.
+   ========================================================================== */
+
+/* ---------- seeded RNG (mulberry32) ---------- */
+let _seed = 1337 >>> 0;
+function rng(){ _seed |= 0; _seed = (_seed + 0x6D2B79F5) | 0;
+  let t = Math.imul(_seed ^ (_seed >>> 15), 1 | _seed);
+  t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+  return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }
+const ri = (a,b)=> a + Math.floor(rng()*(b-a+1));
+const pick = arr => arr[Math.floor(rng()*arr.length)];
+const clamp = (v,a,b)=> v<a?a : v>b?b : v;
+const lerp = (a,b,t)=> a+(b-a)*t;
+const money = c => (c<0?"-$":"$") + Math.abs(Math.round(c)).toLocaleString();
+
+/* ---------- config ---------- */
+const CFG = {
+  COLS:6, ROWS:5, SPACING:150, MARGIN:60, ROADW:26,
+  MIN_PER_SEC:18, STEP:1.5, LIGHT_PERIOD:40,
+  CAR_SPEED:7.3, TRUCK_SPEED:5.4, CAR_GAP:17, STOP_GAP:15, LANE:6.5,
+  N_RES:40, N_CARS:20, N_TRUCKS:4
+};
+const W = CFG.MARGIN*2 + (CFG.COLS-1)*CFG.SPACING;
+const H = CFG.MARGIN*2 + (CFG.ROWS-1)*CFG.SPACING;
+const N = CFG.COLS*CFG.ROWS;
+
+/* ---------- world state ---------- */
+const S = {
+  absMin: 6*60, running:true, speed:1, acc:0,
+  nodes:[], adj:[], buildings:[], businesses:[], residents:[],
+  vehicles:[], trucks:[], orders:[], nodeBuilding:{},
+  goods:{
+    food:{name:"Food", wholesale:5.0, retail:8.5, refill:12, unmet:0, sold:0},
+    goods:{name:"Goods",wholesale:7.5, retail:13.0,refill:14, unmet:0, sold:0}
+  },
+  eco:{ gdpAccum:0, gdpToday:0, produce:{food:0,goods:0}, consume:{food:0,goods:0} },
+  hist:{ gdp:[], money:[], food:[], goods:[] },
+  log:[], gov:{name:"City Hall", cash:0}, taxRate:0.22, moneyTotal:0,
+  view:"residents", selRes:null, selBiz:null, track:null,
+  cam:{scale:1, ox:0, oy:0}, layers:{roads:true, buildings:true, life:true}
+};
+const node = i => S.nodes[i];
+
+/* ---------- money: the only mutation path ---------- */
+function transfer(from, to, amount){
+  if(amount<=0) return 0;
+  from.cash !== undefined ? from.cash -= amount : from.money -= amount;
+  to.cash   !== undefined ? to.cash   += amount : to.money   += amount;
+  return amount;
+}
+function totalMoney(){
+  let t=S.gov.cash;
+  for(const r of S.residents) t+=r.money;
+  for(const b of S.businesses) t+=b.cash;
+  return t;
+}
+
+/* ---------- visual palettes ---------- */
+const ROOFS=["#b0563f","#9c4a37","#c4663f","#84452f","#a85a3e","#8d5a3c","#bd6a45"];
+const WALLS=["#efe3cb","#e8dab9","#f2e8d2","#e3d4b0","#ece0c4"];
+const TREES=["#6b9b4a","#5f8f42","#79a857","#558a3e"];
+const CARCOL=["#d65b4a","#4a7fd6","#e0a13c","#5bb06a","#9b59b6","#46b3b0","#d4688f","#5566cc"];
+const RES_NAMES=["North Homes","Garden Homes","Courtyard Homes","Rowhouse Block","Maple Court",
+  "Birch Quarter","Linden Row","Cedar Block","Willow Homes","Aspen Court","Elm Terrace",
+  "Oak Hollow","Pine Court","Hazel Row","Sunset Villas","Brook Lane"];
+
+/* ---------- city generation ---------- */
+function nidx(c,r){ return r*CFG.COLS + c; }
+function genCity(){
+  for(let r=0;r<CFG.ROWS;r++) for(let c=0;c<CFG.COLS;c++){
+    S.nodes.push({ id:nidx(c,r), c, r,
+      x:CFG.MARGIN + c*CFG.SPACING, y:CFG.MARGIN + r*CFG.SPACING,
+      light:(c>=1 && c<=CFG.COLS-2 && r>=1 && r<=CFG.ROWS-2), phase:(c+r)%2 });
+  }
+  for(let i=0;i<N;i++) S.adj.push([]);
+  const link=(a,b)=>{ S.adj[a].push(b); S.adj[b].push(a); };
+  for(let r=0;r<CFG.ROWS;r++) for(let c=0;c<CFG.COLS;c++){
+    if(c<CFG.COLS-1) link(nidx(c,r), nidx(c+1,r));
+    if(r<CFG.ROWS-1) link(nidx(c,r), nidx(c,r+1));
+  }
+  const blocks=[];
+  for(let br=0;br<CFG.ROWS-1;br++) for(let bc=0;bc<CFG.COLS-1;bc++) blocks.push({bc,br});
+  for(let i=blocks.length-1;i>0;i--){ const j=Math.floor(rng()*(i+1)); [blocks[i],blocks[j]]=[blocks[j],blocks[i]]; }
+
+  const specs=[
+    {name:"Greenfield Farm", role:"producer", good:"food",  wage:150, vstyle:"farm",    color:"#6fae4f"},
+    {name:"Ironworks Factory",role:"producer",good:"goods", wage:155, vstyle:"factory", color:"#b97f4a"},
+    {name:"FreshGrocer",     role:"shop",     good:"food",  wage:128, vstyle:"shop",    color:"#3f9d6b"},
+    {name:"CityMarket",      role:"shop",     good:"food",  wage:124, vstyle:"shop",    color:"#3f9d6b"},
+    {name:"TechBarn",        role:"shop",     good:"goods", wage:132, vstyle:"shop",    color:"#5b7fd6"},
+    {name:"HomeStore",       role:"shop",     good:"goods", wage:126, vstyle:"shop",    color:"#5b7fd6"}
+  ];
+
+  let bId=0, resName=0;
+  for(let i=0;i<blocks.length;i++){
+    const {bc,br}=blocks[i];
+    const left=CFG.MARGIN+bc*CFG.SPACING, top=CFG.MARGIN+br*CFG.SPACING;
+    const right=left+CFG.SPACING, bottom=top+CFG.SPACING;
+    const b={ id:bId++, bc, br, x:(left+right)/2, y:(top+bottom)/2,
+      door:nidx(bc,br), business:null, residents:[],
+      plot:{x0:left+CFG.ROADW/2+8, y0:top+CFG.ROADW/2+8, x1:right-CFG.ROADW/2-8, y1:bottom-CFG.ROADW/2-8} };
+    if(i<specs.length){
+      const sp=specs[i];
+      const biz={ id:S.businesses.length, name:sp.name, role:sp.role, good:sp.good,
+        building:b, door:b.door, color:sp.color, vstyle:sp.vstyle, employees:[], wage:sp.wage,
+        cash:(sp.role==="producer"?9000:11000), buffer:(sp.role==="producer"?9000:11000),
+        inv:{food:0,goods:0}, productivity:(sp.good==="food"?1.5:1.1),
+        cap:520, reorder:55, batch:(sp.good==="food"?44:34),
+        revenueToday:0, expenseToday:0, ledger:[], pending:false, type:sp.good };
+      biz.inv[sp.good] = sp.role==="shop"?90:120;
+      b.business=biz; b.type="business"; b.kind=sp.vstyle; b.color=sp.color; b.label=sp.name;
+      S.businesses.push(biz);
+    } else { b.type="home"; b.kind="home"; b.color="#bcd49a"; b.label=RES_NAMES[resName++%RES_NAMES.length]; }
+    buildArt(b);
+    S.buildings.push(b);
+  }
+  S.nodeBuilding={}; for(const b of S.buildings) S.nodeBuilding[b.door]=b;
+}
+/* precompute static art (houses, trees, parking) for a block */
+function buildArt(b){
+  const p=b.plot, pw=p.x1-p.x0, ph=p.y1-p.y0;
+  b.trees=[]; b.houses=[]; b.parking=[];
+  if(b.kind==="home"){
+    const cols=2+(rng()<0.5?1:0), rows=2;
+    const cw=pw/cols, ch=ph/rows;
+    for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
+      const cx=p.x0+(c+0.5)*cw, cy=p.y0+(r+0.5)*ch;
+      const hw=cw*0.62, hh=ch*0.6;
+      b.houses.push({ x:cx+(rng()-0.5)*cw*0.12, y:cy+(rng()-0.5)*ch*0.12,
+        w:hw, h:hh, roof:pick(ROOFS), wall:pick(WALLS), flip:rng()<0.5 });
+    }
+    const nt=ri(3,5);
+    for(let k=0;k<nt;k++) b.trees.push({ x:p.x0+rng()*pw, y:p.y0+rng()*ph, r:5+rng()*4, c:pick(TREES) });
+  } else {
+    // business: main building + small yard
+    b.main={ x0:p.x0+pw*0.08, y0:p.y0+ph*0.12, x1:p.x1-pw*0.08, y1:p.y1-ph*0.30 };
+    if(b.kind==="shop"){
+      const cars=ri(2,4), lotY=p.y1-ph*0.14;
+      for(let k=0;k<cars;k++) b.parking.push({ x:p.x0+pw*0.16+k*(pw*0.62/cars), y:lotY, c:pick(CARCOL) });
+    }
+    const nt=ri(2,3);
+    for(let k=0;k<nt;k++) b.trees.push({ x:p.x0+(rng()<0.5?pw*0.06:pw*0.94), y:p.y0+rng()*ph, r:5+rng()*3, c:pick(TREES) });
+  }
+}
+
+/* ---------- pathfinding (BFS on uniform grid) ---------- */
+function path(s,t){
+  if(s===t) return [s];
+  const prev=new Int32Array(N).fill(-1), seen=new Uint8Array(N);
+  const q=[s]; seen[s]=1; let head=0;
+  while(head<q.length){
+    const u=q[head++];
+    if(u===t) break;
+    for(const v of S.adj[u]) if(!seen[v]){ seen[v]=1; prev[v]=u; q.push(v); }
+  }
+  const out=[]; let c=t;
+  while(c!==-1){ out.push(c); if(c===s) break; c=prev[c]; }
+  return out.reverse();
+}
+
+/* ---------- residents ---------- */
+const FIRST=["Ava","Noah","Mia","Leo","Ivy","Max","Zoe","Eli","Nora","Kai","Ruby","Owen",
+  "Lena","Finn","Cleo","Jude","Esme","Theo","Iris","Cole","Maya","Reed","Tess","Hugo",
+  "Lily","Jonas","Anya","Vera","Milo","Dora","Otis","Greta","Sven","Pia","Rex","Nina",
+  "Bram","Suki","Yara","Dean"];
+const LAST=["Vance","Okoro","Reyes","Tan","Holt","Bauer","Cruz","Nash","Kelm","Ortiz",
+  "Frost","Lund","Sato","Diaz","Webb","Roe","Kane","Voss","Park","Hale"];
+const TITLES={"Greenfield Farm":"Farm Hand","Ironworks Factory":"Factory Worker",
+  "FreshGrocer":"Grocery Clerk","CityMarket":"Grocery Clerk",
+  "TechBarn":"Sales Associate","HomeStore":"Sales Associate"};
+function genResidents(){
+  const homes=S.buildings.filter(b=>b.type==="home");
+  const used=new Set();
+  function name(){ let n; do{ n=pick(FIRST)+" "+pick(LAST);}while(used.has(n)); used.add(n); return n; }
+  const slots=[];
+  for(const biz of S.businesses){
+    const cnt={"Greenfield Farm":5,"Ironworks Factory":5,"FreshGrocer":4,
+      "CityMarket":3,"TechBarn":4,"HomeStore":3}[biz.name];
+    for(let k=0;k<cnt;k++) slots.push(biz);
+  }
+  let slotIdx=0;
+  for(let i=0;i<CFG.N_RES;i++){
+    const home=homes[i%homes.length];
+    const age=ri(6,78);
+    let role="worker", biz=null;
+    if(age<18) role="child";
+    else if(age>66) role="retired";
+    else if(slotIdx<slots.length){ biz=slots[slotIdx++]; role="worker"; }
+    else role="unemployed";
+    const title=biz?TITLES[biz.name]:(role==="child"?"Student":role==="retired"?"Retired":"Job Seeker");
+    const r={ id:i, name:name(), age, role, jobTitle:title,
+      home, homeNode:home.door, biz, workNode: biz?biz.door:home.door,
+      money: role==="retired"? ri(2600,5200) : ri(1400,3400),
+      wage: biz?biz.wage:0, rate: biz?Math.round(biz.wage/8):0, hoursToday:0, payHours:0,
+      need:{food:ri(55,95), goods:ri(40,90)}, satisfaction:80,
+      consumeScale: role==="worker"?1 : role==="unemployed"?0.8 : role==="retired"?0.55 : 0.45,
+      hasCar:false, carColor:pick(CARCOL), traveling:false, atNode:home.door, state:"home",
+      lifetimeEarn:0, lifetimeSpend:0, car:null };
+    if(biz) biz.employees.push(r);
+    home.residents.push(r);
+    S.residents.push(r);
+  }
+  const commuters=S.residents.filter(r=>r.biz);
+  for(let i=0;i<Math.min(CFG.N_CARS,commuters.length);i++) commuters[i].hasCar=true;
+}
+
+/* ---------- trucks ---------- */
+function genTrucks(){
+  const depots=[S.businesses[0].door, S.businesses[1].door, S.businesses[0].door, S.businesses[1].door];
+  for(let i=0;i<CFG.N_TRUCKS;i++){
+    const nd=node(depots[i]);
+    const t={ kind:"truck", id:i, atNode:depots[i], x:nd.x, y:nd.y,
+      state:"idle", order:null, cargo:0, cargoGood:null,
+      path:null, seg:0, t:0, speed:CFG.TRUCK_SPEED, done:true, _ang:0 };
+    S.trucks.push(t); S.vehicles.push(t);
+  }
+}
+
+/* ---------- vehicle helpers (unchanged core) ---------- */
+function segDir(p,i){ const a=node(p[i]), b=node(p[i+1]); return a.r===b.r ? "H" : "V"; }
+function placeVehicle(v){
+  if(!v.path || v.seg>=v.path.length-1){ const nd=node(v.atNode); v.x=nd.x; v.y=nd.y; return; }
+  const a=node(v.path[v.seg]), b=node(v.path[v.seg+1]);
+  const dir=segDir(v.path,v.seg);
+  let ox=0, oy=0;
+  if(dir==="H") oy = (b.c>a.c)? CFG.LANE : -CFG.LANE;
+  else          ox = (b.r>a.r)? -CFG.LANE : CFG.LANE;
+  v.x=lerp(a.x,b.x,v.t)+ox; v.y=lerp(a.y,b.y,v.t)+oy;
+  v._ang=Math.atan2(b.y-a.y, b.x-a.x);
+}
+function greenFor(nd, dir){
+  if(!nd.light) return true;
+  const ph = (Math.floor(S.absMin/CFG.LIGHT_PERIOD)+nd.phase)%2;
+  return dir==="V" ? ph===0 : ph===1;
+}
+function startTrip(v, from, to, onArrive){
+  v.path=path(from,to); v.seg=0; v.t=0; v.atNode=from; v.onArrive=onArrive;
+  if(v.path.length<2){ v.done=true; placeVehicle(v); if(onArrive) onArrive(); return; }
+  v.done=false; placeVehicle(v);
+}
+function updateVehicles(dt){
+  for(const v of S.vehicles){
+    if(v.done || !v.path) continue;
+    if(v.seg>=v.path.length-1){
+      v.done=true; const cb=v.onArrive; v.onArrive=null; placeVehicle(v); if(cb) cb(); continue;
+    }
+    let guard=0;
+    let remaining = v.speed*dt;
+    while(remaining>0 && !v.done && guard++<8){
+      const a=node(v.path[v.seg]), b=node(v.path[v.seg+1]);
+      const segLen=Math.hypot(b.x-a.x,b.y-a.y);
+      const dir=segDir(v.path,v.seg);
+      let cap=1;
+      if(!greenFor(b,dir)) cap=Math.min(cap, 1-CFG.STOP_GAP/segLen);
+      for(const w of S.vehicles){
+        if(w===v||w.done||!w.path||w.seg>=w.path.length-1) continue;
+        if(w.path[w.seg]===v.path[v.seg] && w.path[w.seg+1]===v.path[v.seg+1] && w.t>v.t)
+          cap=Math.min(cap, w.t - CFG.CAR_GAP/segLen);
+      }
+      const want = v.t + remaining/segLen;
+      const next = Math.min(want, cap);
+      if(next<=v.t){ v.t=Math.max(v.t,next); break; }
+      const moved=(next-v.t)*segLen; remaining-=moved; v.t=next;
+      if(v.t>=1-1e-6){
+        v.seg++; v.atNode=v.path[v.seg]; v.t=0;
+        if(v.seg>=v.path.length-1){ v.done=true; const cb=v.onArrive; v.onArrive=null;
+          placeVehicle(v); if(cb) cb(); break; }
+      }
+    }
+    placeVehicle(v);
+  }
+  for(let i=S.vehicles.length-1;i>=0;i--){
+    const v=S.vehicles[i];
+    if(v.kind!=="truck" && v.done && v.retire){ S.vehicles.splice(i,1); }
+  }
+}
+function spawnCar(res, from, to, onArrive){
+  if(res.car) return null;
+  const nd=node(from);
+  const car={ kind:"car", res, x:nd.x, y:nd.y, speed:CFG.CAR_SPEED,
+    path:null, seg:0, t:0, done:false, retire:false, atNode:from, _ang:0 };
+  res.car=car; res.traveling=true;
+  startTrip(car, from, to, ()=>{ if(onArrive) onArrive(); });
+  S.vehicles.push(car);
+  return car;
+}
+function endCar(res){
+  if(res.car){ res.car.retire=true; res.car.done=true; res.car=null; }
+  res.traveling=false;
+}
+
+/* ---------- shopping ---------- */
+function nearestShop(good, fromNode){
+  const nd=node(fromNode); let best=null, bd=1e9;
+  for(const b of S.businesses){
+    if(b.role!=="shop"||b.good!==good||b.inv[good]<=0) continue;
+    const dn=node(b.door); const d=Math.hypot(dn.x-nd.x,dn.y-nd.y);
+    if(d<bd){ bd=d; best=b; }
+  }
+  return best;
+}
+function doPurchase(res, shop, good){
+  const g=S.goods[good];
+  const want = Math.max(1, Math.ceil((100-res.need[good])/g.refill));
+  let qty=Math.min(want, shop.inv[good], Math.floor(res.money/g.retail));
+  if(qty<=0){ g.unmet++; return; }
+  const cost=qty*g.retail;
+  transfer(res, shop, cost);
+  shop.inv[good]-=qty; shop.revenueToday+=cost;
+  res.need[good]=clamp(res.need[good]+qty*g.refill,0,120);
+  res.lifetimeSpend+=cost; g.sold+=qty;
+  S.eco.consume[good]+=qty;
+  const va=qty*(g.retail-g.wholesale); S.eco.gdpAccum+=va; S.eco.gdpToday+=va;
+}
+function tryShop(res, good){
+  if(res.traveling) return;
+  const g=S.goods[good];
+  const shop=nearestShop(good,res.atNode);
+  if(!shop){ g.unmet++; return; }
+  if(res.hasCar && !res.car && res.atNode!==shop.door){
+    const origin=res.atNode;
+    res.state="shopping";
+    spawnCar(res, origin, shop.door, ()=>{
+      doPurchase(res,shop,good);
+      const car=res.car;
+      startTrip(car, shop.door, origin, ()=>{ endCar(res); res.atNode=origin; res.state="home"; });
+    });
+  } else doPurchase(res,shop,good);
+}
+
+/* ---------- hourly economy ---------- */
+function produce(){
+  for(const b of S.businesses){
+    if(b.role!=="producer") continue;
+    const room=b.cap-b.inv[b.good];
+    const made=Math.min(b.employees.length*b.productivity, room);
+    if(made>0){ b.inv[b.good]+=made; S.eco.produce[b.good]+=made;
+      const va=made*S.goods[b.good].wholesale; S.eco.gdpAccum+=va; S.eco.gdpToday+=va; }
+  }
+}
+function logistics(){
+  for(const shop of S.businesses){
+    if(shop.role!=="shop"||shop.pending) continue;
+    if(shop.inv[shop.good] >= shop.reorder) continue;
+    const src=S.businesses.find(b=>b.role==="producer"&&b.good===shop.good&&b.inv[b.good]>5);
+    if(!src) continue;
+    S.orders.push({good:shop.good, src, shop}); shop.pending=true;
+  }
+  for(const tr of S.trucks){
+    if(tr.state!=="idle"||S.orders.length===0) continue;
+    const nd=node(tr.atNode);
+    let bi=0,bd=1e9;
+    for(let i=0;i<S.orders.length;i++){ const dn=node(S.orders[i].src.door);
+      const d=Math.hypot(dn.x-nd.x,dn.y-nd.y); if(d<bd){bd=d;bi=i;} }
+    const order=S.orders.splice(bi,1)[0];
+    tr.order=order; tr.state="toPickup";
+    startTrip(tr, tr.atNode, order.src.door, ()=>truckArrived(tr));
+  }
+}
+function truckArrived(tr){
+  const o=tr.order;
+  if(tr.state==="toPickup"){
+    const qty=Math.min(tr.order.shop.batch, o.src.inv[o.good]);
+    o.src.inv[o.good]-=qty; tr.cargo=qty; tr.cargoGood=o.good;
+    tr.state="toDrop";
+    startTrip(tr, o.src.door, o.shop.door, ()=>truckArrived(tr));
+  } else if(tr.state==="toDrop"){
+    const g=S.goods[o.good]; const cost=tr.cargo*g.wholesale;
+    const paid=transfer(o.shop, o.src, Math.min(cost,o.shop.cash));
+    o.shop.expenseToday+=paid; o.src.revenueToday+=paid;
+    o.shop.inv[o.good]+=tr.cargo;
+    logEvt(`<b>${tr.cargo}</b> ${g.name.toLowerCase()} delivered to <b>${o.shop.name}</b>`);
+    tr.cargo=0; tr.cargoGood=null; o.shop.pending=false; tr.order=null; tr.state="idle";
+    tr.done=true; tr.path=null; placeVehicle(tr);
+  }
+}
+function payWages(){
+  for(const b of S.businesses){
+    let bill=0; for(const e of b.employees) bill+=e.wage;
+    if(bill<=0) continue;
+    const pay=Math.min(bill,b.cash);
+    for(const e of b.employees){ const share=pay*(e.wage/bill);
+      transfer(b,e,share); e.lifetimeEarn+=share;
+      transfer(e, S.gov, share*S.taxRate); }
+    b.expenseToday+=pay;
+  }
+}
+function commute(toWork){
+  for(const r of S.residents){
+    if(!r.biz||r.traveling) continue;
+    const from=toWork? r.homeNode : r.workNode;
+    const to  =toWork? r.workNode : r.homeNode;
+    r.state="commuting";
+    if(from===to){ r.atNode=to; r.state=toWork?"working":"home"; continue; }
+    if(r.hasCar){
+      spawnCar(r, from, to, ()=>{ endCar(r); r.atNode=to; r.state=toWork?"working":"home"; });
+    } else { r.atNode=to; r.state=toWork?"working":"home"; }
+  }
+}
+
+/* ---------- daily close ---------- */
+function dayClose(){
+  const day=Math.floor(S.absMin/1440);
+  const deps=S.residents.filter(r=>!r.biz);
+  if(deps.length && S.gov.cash>0){
+    const per=S.gov.cash/deps.length;
+    for(const r of deps){ transfer(S.gov,r,per); r.lifetimeEarn+=per; }
+  }
+  for(const b of S.businesses){
+    const excess=b.cash-b.buffer;
+    if(excess<=0) continue;
+    const labor=excess*0.5, citizen=excess*0.4;
+    let wsum=0; for(const e of b.employees) wsum+=e.wage;
+    if(wsum>0) for(const e of b.employees){ const a=labor*(e.wage/wsum); transfer(b,e,a); e.lifetimeEarn+=a; }
+    const per=citizen/S.residents.length;
+    for(const r of S.residents){ transfer(b,r,per); r.lifetimeEarn+=per; }
+    b.expenseToday+=labor+citizen;
+  }
+  for(const b of S.businesses){
+    const profit=b.revenueToday-b.expenseToday;
+    b.ledger.push({day, rev:b.revenueToday, exp:b.expenseToday, profit});
+    if(b.ledger.length>40) b.ledger.shift();
+    b.lastProfit=profit; b.revenueToday=0; b.expenseToday=0;
+  }
+  for(const k of ["food","goods"]){
+    const g=S.goods[k];
+    let stock=0; for(const b of S.businesses) if(b.good===k&&b.role==="shop") stock+=b.inv[k];
+    if(g.unmet>10) g.retail*=1.02;
+    else if(stock> (k==="food"?240:200)) g.retail*=0.99;
+    g.retail=clamp(g.retail, g.wholesale*1.25, g.wholesale*2.0);
+    g.unmet=0; g.sold=0;
+  }
+  const tot=totalMoney();
+  const drift=Math.abs(tot-S.moneyTotal);
+  logEvt(`<b>Day ${day}</b> close — GDP ${money(S.eco.gdpToday)}, money ${money(tot)}`+
+         (drift>1?` ⚠ drift ${money(drift)}`:" ✓"));
+  S.eco.gdpToday=0; S.eco.produce={food:0,goods:0}; S.eco.consume={food:0,goods:0};
+}
+
+/* ---------- hour dispatcher ---------- */
+let lastGdpAccum=0;
+function onHour(hod){
+  produce();
+  logistics();
+  for(const r of S.residents){
+    r.need.food=clamp(r.need.food-2.5*r.consumeScale,0,120);
+    r.need.goods=clamp(r.need.goods-2.0*r.consumeScale,0,120);
+    r.satisfaction=clamp(0.6*r.satisfaction+0.4*((r.need.food+r.need.goods)/2),0,100);
+  }
+  if(hod===0) for(const r of S.residents) r.hoursToday=0;
+  if(hod>=8 && hod<18) for(const r of S.residents)
+    if(r.biz && !r.traveling && r.atNode===r.workNode){ r.hoursToday++; r.payHours++; }
+  if(hod>=8 && hod<=21){
+    for(const r of S.residents){
+      if(r.need.food<58 && r.money>S.goods.food.retail) tryShop(r,"food");
+      if(r.need.goods<48 && r.money>S.goods.goods.retail && rng()<0.7) tryShop(r,"goods");
+    }
+  }
+  if(hod===7) commute(true);
+  if(hod===17) commute(false);
+  if(hod===18) payWages();
+  const gdpHr=S.eco.gdpAccum-lastGdpAccum; lastGdpAccum=S.eco.gdpAccum;
+  pushHist(S.hist.gdp,gdpHr); pushHist(S.hist.money,totalMoney());
+  pushHist(S.hist.food,S.goods.food.retail); pushHist(S.hist.goods,S.goods.goods.retail);
+  if(hod===0) dayClose();
+}
+function pushHist(arr,v){ arr.push(v); if(arr.length>140) arr.shift(); }
+function logEvt(html){ S.log.unshift({t:fmtClock(), html}); if(S.log.length>40) S.log.pop(); }
+
+/* ---------- simulation advance ---------- */
+function advance(dt){
+  const prevH=Math.floor(S.absMin/60);
+  S.absMin+=dt;
+  const curH=Math.floor(S.absMin/60);
+  for(let h=prevH+1;h<=curH;h++) onHour(h%24);
+  updateVehicles(dt);
+}
+function stepSim(realDt){
+  if(!S.running) return;
+  S.acc += realDt*CFG.MIN_PER_SEC*S.speed;
+  let guard=0;
+  while(S.acc>=CFG.STEP && guard++<400){ advance(CFG.STEP); S.acc-=CFG.STEP; }
+}
+
+/* =====================================================================
+   RENDERING
+   ===================================================================== */
+const map=document.getElementById("map");
+const mx=map.getContext("2d");
+const cam=S.cam;
+function wx(x){ return cam.ox + x*cam.scale; }
+function wy(y){ return cam.oy + y*cam.scale; }
+function fitView(){
+  const r=map.getBoundingClientRect();
+  const s=Math.min(r.width/W, r.height/H)*0.97;
+  cam.scale=s; cam.ox=(r.width-W*s)/2; cam.oy=(r.height-H*s)/2;
+}
+function layoutMap(refit){
+  const r=map.getBoundingClientRect(), dpr=window.devicePixelRatio||1;
+  map.width=Math.max(1,r.width*dpr); map.height=Math.max(1,r.height*dpr);
+  mx.setTransform(dpr,0,0,dpr,0,0);
+  if(refit) fitView();
+}
+function rrect(c,x,y,w,h,r){
+  r=Math.min(r,w/2,h/2);
+  c.beginPath(); c.moveTo(x+r,y);
+  c.arcTo(x+w,y,x+w,y+h,r); c.arcTo(x+w,y+h,x,y+h,r);
+  c.arcTo(x,y+h,x,y,r); c.arcTo(x,y,x+w,y,r); c.closePath();
+}
+function renderMap(){
+  const r=map.getBoundingClientRect();
+  mx.clearRect(0,0,r.width,r.height);
+  mx.fillStyle="#cdbb8e"; mx.fillRect(0,0,r.width,r.height);              // ground
+  const s=cam.scale;
+  // city base
+  mx.fillStyle="#d3c39a"; rrect(mx,wx(0),wy(0),W*s,H*s,14*s); mx.fill();
+  drawZones(s);
+  if(S.layers.roads) drawRoads(s);
+  if(S.layers.buildings){ for(const b of S.buildings) drawBuilding(b,s); drawLabels(s); }
+  if(S.layers.roads) for(const nd of S.nodes) if(nd.light) drawLight(nd,s);
+  if(S.layers.life) for(const v of S.vehicles) drawVehicle(v,s);
+  drawTrack(s);
+}
+function drawZones(s){
+  for(const b of S.buildings){
+    const left=CFG.MARGIN+b.bc*CFG.SPACING+CFG.ROADW/2, top=CFG.MARGIN+b.br*CFG.SPACING+CFG.ROADW/2;
+    const w=(CFG.SPACING-CFG.ROADW)*s, h=(CFG.SPACING-CFG.ROADW)*s;
+    mx.fillStyle = b.type==="business" ? "#a9c2d6" : "#bcd49a";
+    rrect(mx,wx(left),wy(top),w,h,7*s); mx.fill();
+    mx.strokeStyle="rgba(255,255,255,.35)"; mx.lineWidth=1; mx.stroke();
+  }
+}
+function drawRoads(s){
+  // asphalt with light sidewalk underlay
+  mx.lineCap="butt";
+  for(let pass=0;pass<2;pass++){
+    mx.strokeStyle = pass===0 ? "#cdbf9f" : "#79756c";
+    mx.lineWidth = (pass===0 ? CFG.ROADW+8 : CFG.ROADW)*s;
+    for(let i=0;i<N;i++) for(const j of S.adj[i]) if(j>i){
+      const a=node(i),b=node(j);
+      mx.beginPath(); mx.moveTo(wx(a.x),wy(a.y)); mx.lineTo(wx(b.x),wy(b.y)); mx.stroke();
+    }
+  }
+  // centre dashes
+  mx.strokeStyle="#e8c45a"; mx.lineWidth=Math.max(1,1.6*s); mx.setLineDash([7*s,8*s]);
+  for(let i=0;i<N;i++) for(const j of S.adj[i]) if(j>i){
+    const a=node(i),b=node(j);
+    mx.beginPath(); mx.moveTo(wx(a.x),wy(a.y)); mx.lineTo(wx(b.x),wy(b.y)); mx.stroke();
+  }
+  mx.setLineDash([]);
+  // crosswalks at controlled intersections
+  mx.strokeStyle="rgba(255,255,255,.8)"; mx.lineWidth=Math.max(1,1.4*s);
+  for(const nd of S.nodes){
+    if(!nd.light) continue;
+    const off=(CFG.ROADW/2+5)*s, halfband=CFG.ROADW*0.32;
+    for(const dir of [[0,-1],[0,1],[-1,0],[1,0]]){
+      for(let k=-1;k<=1;k++){
+        const cx=wx(nd.x)+dir[0]*off, cy=wy(nd.y)+dir[1]*off;
+        if(dir[0]!==0){ const yy=cy+k*halfband*s; mx.beginPath();
+          mx.moveTo(cx,yy); mx.lineTo(cx+dir[0]*5*s,yy); mx.stroke(); }
+        else { const xx=cx+k*halfband*s; mx.beginPath();
+          mx.moveTo(xx,cy); mx.lineTo(xx,cy+dir[1]*5*s); mx.stroke(); }
+      }
+    }
+  }
+}
+function shadow(x,y,w,h,s){
+  mx.fillStyle="rgba(70,50,25,.22)";
+  rrect(mx,x+2.5*s,y+3.5*s,w,h,3*s); mx.fill();
+}
+function drawBuilding(b,s){
+  // trees behind
+  for(const t of b.trees) drawTree(t,s);
+  if(b.kind==="home"){
+    for(const hs of b.houses) drawHouse(hs,s);
+  } else if(b.kind==="farm"){
+    drawFarm(b,s);
+  } else if(b.kind==="factory"){
+    drawFactory(b,s);
+  } else {
+    drawShop(b,s);
+  }
+}
+function drawHouse(h,s){
+  const x=wx(h.x-h.w/2), y=wy(h.y-h.h/2), w=h.w*s, ht=h.h*s;
+  shadow(x,y,w,ht,s);
+  // body
+  mx.fillStyle=h.wall; rrect(mx,x,y+ht*0.34,w,ht*0.66,2*s); mx.fill();
+  // roof (trapezoid)
+  mx.fillStyle=h.roof;
+  mx.beginPath();
+  mx.moveTo(x-1*s, y+ht*0.42); mx.lineTo(x+w*0.5, y); mx.lineTo(x+w+1*s, y+ht*0.42);
+  mx.closePath(); mx.fill();
+  // door + window
+  if(s>0.55){
+    mx.fillStyle="rgba(70,50,30,.55)";
+    mx.fillRect(x+w*0.42, y+ht*0.62, w*0.16, ht*0.36);
+    mx.fillStyle="rgba(150,190,210,.85)";
+    mx.fillRect(x+w*0.16, y+ht*0.5, w*0.16, w*0.16);
+    mx.fillRect(x+w*0.68, y+ht*0.5, w*0.16, w*0.16);
+  }
+}
+function drawTree(t,s){
+  const x=wx(t.x), y=wy(t.y), r=t.r*s;
+  mx.fillStyle="rgba(70,50,25,.18)"; mx.beginPath(); mx.ellipse(x+1.5*s,y+2*s,r,r*0.6,0,0,7); mx.fill();
+  mx.fillStyle="#6b4a2e"; mx.fillRect(x-1*s, y, 2*s, r*0.8);
+  mx.fillStyle=t.c; mx.beginPath(); mx.arc(x,y,r,0,7); mx.fill();
+  mx.fillStyle="rgba(255,255,255,.12)"; mx.beginPath(); mx.arc(x-r*0.3,y-r*0.3,r*0.45,0,7); mx.fill();
+}
+function bizBox(b,s){ const m=b.main; return {x:wx(m.x0),y:wy(m.y0),w:(m.x1-m.x0)*s,h:(m.y1-m.y0)*s}; }
+function drawFarm(b,s){
+  const m=b.main, x=wx(m.x0), y=wy(m.y0), w=(m.x1-m.x0)*s, h=(m.y1-m.y0)*s;
+  // crop field
+  mx.fillStyle="#cdb86a"; rrect(mx,x,y,w,h,3*s); mx.fill();
+  mx.strokeStyle="#a9943f"; mx.lineWidth=Math.max(1,1.5*s);
+  const rows=6; for(let i=1;i<rows;i++){ const yy=y+h*i/rows;
+    mx.beginPath(); mx.moveTo(x+2*s,yy); mx.lineTo(x+w-2*s,yy); mx.stroke(); }
+  mx.fillStyle="#7fae4a"; for(let i=0;i<rows;i++) for(let j=0;j<8;j++)
+    if(s>0.5){ mx.fillRect(x+ (j+0.5)*w/8 -1*s, y+(i+0.5)*h/rows -1*s, 2*s,2*s); }
+  // little barn
+  shadow(x+w*0.62,y-h*0.18,w*0.34,h*0.4,s);
+  mx.fillStyle="#b0563f"; rrect(mx,x+w*0.62,y-h*0.05,w*0.34,h*0.4,2*s); mx.fill();
+  mx.fillStyle="#7d4a36"; mx.beginPath();
+  mx.moveTo(x+w*0.6,y); mx.lineTo(x+w*0.79,y-h*0.16); mx.lineTo(x+w*0.98,y); mx.closePath(); mx.fill();
+}
+function drawFactory(b,s){
+  const x=wx(b.main.x0), y=wy(b.main.y0), w=(b.main.x1-b.main.x0)*s, h=(b.main.y1-b.main.y0)*s;
+  shadow(x,y,w,h,s);
+  mx.fillStyle="#9aa0a6"; rrect(mx,x,y,w,h,2*s); mx.fill();
+  // sawtooth roof
+  mx.fillStyle="#7d8389";
+  const teeth=4; for(let i=0;i<teeth;i++){ const tx=x+i*w/teeth;
+    mx.beginPath(); mx.moveTo(tx,y); mx.lineTo(tx+w/teeth,y); mx.lineTo(tx+w/teeth,y-h*0.16); mx.closePath(); mx.fill(); }
+  // chimney + windows
+  mx.fillStyle="#6b6f74"; mx.fillRect(x+w*0.78,y-h*0.42,w*0.1,h*0.42);
+  if(s>0.5){ mx.fillStyle="rgba(150,190,210,.85)";
+    for(let i=0;i<4;i++) mx.fillRect(x+w*(0.1+i*0.2), y+h*0.4, w*0.12, h*0.3); }
+}
+function drawShop(b,s){
+  const x=wx(b.main.x0), y=wy(b.main.y0), w=(b.main.x1-b.main.x0)*s, h=(b.main.y1-b.main.y0)*s;
+  // parking cars
+  for(const p of b.parking){ const px=wx(p.x), py=wy(p.y);
+    mx.fillStyle="rgba(70,50,25,.2)"; rrect(mx,px-4*s,py-2.5*s,9*s,6*s,2*s); mx.fill();
+    mx.fillStyle=p.c; rrect(mx,px-4.5*s,py-3*s,9*s,6*s,2*s); mx.fill(); }
+  shadow(x,y,w,h,s);
+  mx.fillStyle="#e9e2d2"; rrect(mx,x,y,w,h,2*s); mx.fill();
+  // flat roof band
+  mx.fillStyle=b.good==="food"?"#3f9d6b":"#5b7fd6"; mx.fillRect(x,y,w,h*0.18);
+  // striped awning
+  const ay=y+h*0.5, aw=w, n=7;
+  for(let i=0;i<n;i++){ mx.fillStyle = i%2? "#ffffff" : (b.good==="food"?"#e06a4a":"#e0a13c");
+    mx.fillRect(x+i*aw/n, ay, aw/n, h*0.12); }
+  // windows
+  if(s>0.5){ mx.fillStyle="rgba(150,190,210,.9)";
+    mx.fillRect(x+w*0.12,y+h*0.66,w*0.3,h*0.26);
+    mx.fillRect(x+w*0.58,y+h*0.66,w*0.3,h*0.26); }
+}
+function drawLabels(s){
+  if(s<0.42) return;
+  mx.textAlign="center"; mx.textBaseline="middle";
+  for(const b of S.buildings){
+    const fs=Math.max(8, (b.type==="business"?9.5:8.5)*s);
+    mx.font=`${b.type==="business"?"700":"600"} ${fs}px -apple-system,sans-serif`;
+    const ty=wy(b.plot.y1+ (b.type==="business"? -2 : 4));
+    mx.fillStyle="rgba(255,255,255,.85)"; mx.fillText(b.label, wx(b.x), ty+1);
+    mx.fillStyle= b.type==="business" ? "#2c4a63" : "#3c5a2c";
+    mx.fillText(b.label, wx(b.x), ty);
+  }
+}
+function drawLight(nd,s){
+  const ns=greenFor(nd,"V"), x=wx(nd.x), y=wy(nd.y);
+  mx.fillStyle="#2c2c30"; rrect(mx,x-2.2*s,y-2.2*s,4.4*s,4.4*s,1.4*s); mx.fill();
+  mx.fillStyle=ns?"#46d17f":"#ff5a5a"; mx.beginPath(); mx.arc(x,y-4.6*s,1.7*s,0,7); mx.fill();
+  mx.fillStyle=!ns?"#46d17f":"#ff5a5a"; mx.beginPath(); mx.arc(x+4.6*s,y,1.7*s,0,7); mx.fill();
+}
+function drawVehicle(v,s){
+  const x=wx(v.x), y=wy(v.y), ang=v._ang||0;
+  mx.save(); mx.translate(x,y); mx.rotate(ang);
+  if(v.kind==="truck"){
+    const L=13*s, Wd=7*s;
+    mx.fillStyle="rgba(60,40,20,.28)"; rrect(mx,-L*0.5,-Wd*0.5+1.5*s,L,Wd,2*s); mx.fill();
+    mx.fillStyle="#dfe2e6"; rrect(mx,-L*0.5,-Wd*0.5,L*0.62,Wd,1.5*s); mx.fill();         // box
+    mx.fillStyle=v.cargo>0?"#e08a3c":"#c98a3a"; rrect(mx,L*0.1,-Wd*0.5,L*0.4,Wd,1.5*s); mx.fill(); // cab
+    mx.fillStyle="rgba(40,60,80,.7)"; mx.fillRect(L*0.34,-Wd*0.32,L*0.12,Wd*0.64);
+  } else {
+    const L=10*s, Wd=5.6*s, col=v.res?v.res.carColor:"#4a7fd6";
+    mx.fillStyle="rgba(60,40,20,.28)"; rrect(mx,-L*0.5,-Wd*0.5+1.3*s,L,Wd,2.2*s); mx.fill();
+    mx.fillStyle=col; rrect(mx,-L*0.5,-Wd*0.5,L,Wd,2.4*s); mx.fill();
+    mx.fillStyle="rgba(220,235,245,.85)"; rrect(mx,-L*0.06,-Wd*0.34,L*0.34,Wd*0.68,1*s); mx.fill();
+    mx.fillStyle="rgba(255,255,255,.5)"; mx.fillRect(L*0.34,-Wd*0.3,L*0.1,Wd*0.6);
+  }
+  mx.restore();
+}
+function trackPos(r){
+  if(r.car) return {x:r.car.x, y:r.car.y};
+  const b=S.nodeBuilding[r.atNode]||r.home;
+  return {x:b.x, y:b.y};
+}
+function drawTrack(s){
+  const r=S.track; if(!r) return;
+  const p=trackPos(r), x=wx(p.x), y=wy(p.y);
+  const t=(Date.now()%1200)/1200, rad=(9+t*9)*s;
+  mx.strokeStyle=`rgba(224,138,60,${1-t})`; mx.lineWidth=2.4; mx.beginPath(); mx.arc(x,y,rad,0,7); mx.stroke();
+  mx.fillStyle="#e08a3c"; mx.beginPath(); mx.arc(x,y-15*s,4.5*s,0,7); mx.fill();
+  mx.beginPath(); mx.moveTo(x,y-4*s); mx.lineTo(x-4*s,y-12*s); mx.lineTo(x+4*s,y-12*s); mx.closePath(); mx.fill();
+}
+
+/* ---------- charts ---------- */
+const chartCv=document.getElementById("charts");
+const cx=chartCv.getContext("2d");
+function layoutCharts(){
+  const r=chartCv.parentElement.getBoundingClientRect(), dpr=window.devicePixelRatio||1;
+  chartCv.width=Math.max(1,r.width*dpr); chartCv.height=Math.max(1,r.height*dpr);
+  cx.setTransform(dpr,0,0,dpr,0,0); chartCv._w=r.width; chartCv._h=r.height;
+}
+function drawChart(x,y,w,h,series,title,color,fmt){
+  cx.fillStyle="#faf5ea"; rrect(cx,x,y,w,h,8); cx.fill();
+  cx.strokeStyle="#e7dcc6"; cx.lineWidth=1; cx.stroke();
+  const d=series; let mn=Infinity,mx2=-Infinity;
+  for(const v of d){ if(v<mn)mn=v; if(v>mx2)mx2=v; }
+  if(!isFinite(mn)){ mn=0; mx2=1; }
+  const mid=(mn+mx2)/2, minSpan=Math.max(1e-6, Math.abs(mid)*0.02);  // don't amplify noise on near-constant series
+  if(mx2-mn<minSpan){ mn=mid-minSpan/2; mx2=mid+minSpan/2; }
+  const pad=8, gx=x+pad, gy=y+24, gw=w-pad*2, gh=h-34;
+  cx.fillStyle="#8a7c66"; cx.font="11px -apple-system,sans-serif"; cx.textAlign="left"; cx.textBaseline="alphabetic";
+  cx.fillText(title,x+10,y+16);
+  cx.textAlign="right"; cx.fillStyle=color; cx.font="bold 12px -apple-system,sans-serif";
+  cx.fillText(d.length?fmt(d[d.length-1]):"—", x+w-10, y+16);
+  if(d.length<2) return;
+  cx.beginPath();
+  for(let i=0;i<d.length;i++){ const px=gx+gw*(i/(d.length-1)), py=gy+gh-gh*((d[i]-mn)/(mx2-mn));
+    i?cx.lineTo(px,py):cx.moveTo(px,py); }
+  cx.strokeStyle=color; cx.lineWidth=2; cx.stroke();
+  cx.lineTo(gx+gw,gy+gh); cx.lineTo(gx,gy+gh); cx.closePath();
+  cx.globalAlpha=0.13; cx.fillStyle=color; cx.fill(); cx.globalAlpha=1;
+}
+function renderCharts(){
+  if(S.view!=="charts") return;
+  const w=chartCv._w||10,h=chartCv._h||10, g=8;
+  cx.clearRect(0,0,w,h);
+  const cw=(w-g*3)/2, ch=(h-g*3)/2;
+  drawChart(g,g,cw,ch,S.hist.gdp,"GDP / hour","#e08a3c",v=>money(v));
+  drawChart(g*2+cw,g,cw,ch,S.hist.money,"Money supply (conserved)","#3f9d6b",v=>money(v));
+  drawChart(g,g*2+ch,cw,ch,S.hist.food,"Food price","#6fae4f",v=>"$"+v.toFixed(2));
+  drawChart(g*2+cw,g*2+ch,cw,ch,S.hist.goods,"Goods price","#5b7fd6",v=>"$"+v.toFixed(2));
+}
+
+/* =====================================================================
+   HUD / PANELS
+   ===================================================================== */
+const BASE_DATE=new Date(2024,0,13,0,0,0);   // Sat Jan 13 2024
+function fmtClock(){
+  const m=Math.floor(S.absMin%1440);
+  const hh=String(Math.floor(m/60)).padStart(2,"0"), mm=String(Math.floor(m%60)).padStart(2,"0");
+  return `Day ${Math.floor(S.absMin/1440)+1} · ${hh}:${mm}`;
+}
+function fmtDate(){
+  const d=new Date(BASE_DATE.getTime()+S.absMin*60000);
+  return d.toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric",year:"numeric"})
+    + " " + d.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
+}
+function stateOf(r){
+  const h=Math.floor((S.absMin%1440)/60);
+  if(r.traveling) return r.state==="shopping"?"Shopping":"Commuting";
+  if(r.state==="working") return "Working";
+  if(h<6||h>=22) return "Sleeping";
+  return "At home";
+}
+function stateColor(st){
+  return st==="Working"?"#3f9d6b": st==="Commuting"?"#e08a3c": st==="Shopping"?"#5b7fd6":
+         st==="Sleeping"?"#9b8fb0":"#a9b56a";
+}
+function locOf(r){ if(r.car) return "On the road"; const b=S.nodeBuilding[r.atNode]; return b?b.label:"—"; }
+function destOf(r){
+  if(r.car&&r.car.path&&r.car.path.length){ const b=S.nodeBuilding[r.car.path[r.car.path.length-1]];
+    return b?b.label:"—"; }
+  return "—";
+}
+function zoneOf(r){ const b=S.nodeBuilding[r.atNode]; return b?(b.type==="business"?"In commercial area":"In residential area"):"In transit"; }
+
+let lastHud="";
+function renderHUD(){
+  document.getElementById("subtitle").textContent =
+    `${fmtDate()}  ·  ${S.residents.length} residents · ${S.residents.filter(r=>r.hasCar).length} cars · ${S.trucks.length} trucks`;
+  const emp=S.residents.filter(r=>r.biz).length;
+  const wa=S.residents.filter(r=>r.role==="worker"||r.role==="unemployed").length||1;
+  document.getElementById("chips").innerHTML=
+    chip(money(S.eco.gdpToday),"GDP today")+
+    chip(money(totalMoney()),"Money")+
+    chip(Math.round(emp/wa*100)+"%","Employed")+
+    chip("$"+S.goods.food.retail.toFixed(2),"Food")+
+    chip("$"+S.goods.goods.retail.toFixed(2),"Goods")+
+    chip(S.vehicles.filter(v=>!v.done||(v.kind==="truck"&&v.state!=="idle")).length,"On road");
+
+  renderList();
+  renderDetail();
+}
+function chip(v,l){ return `<div class="chip"><b>${v}</b><small>${l}</small></div>`; }
+
+function renderList(){
+  const lh=document.getElementById("lhead-t"), ls=document.getElementById("lhead-s");
+  const el=document.getElementById("list");
+  if(S.view==="businesses"){
+    lh.textContent="Businesses"; ls.textContent=`${S.businesses.length} firms`;
+    el.innerHTML=S.businesses.map(b=>{
+      const p=b.lastProfit||0;
+      return `<div class="item ${S.selBiz===b?'on':''}" data-biz="${b.id}">
+        <span class="dot" style="background:${b.color}"></span>
+        <span class="nm"><b>${b.name}</b><small>${b.role} · ${b.employees.length} staff</small></span>
+        <span class="rt"><b>${money(b.cash)}</b><small class="${p>=0?'pos':'neg'}">${p>=0?'+':''}${money(p)}/d</small></span>
+      </div>`;
+    }).join("");
+  } else {
+    const emp=S.residents.filter(r=>r.biz).length;
+    lh.textContent="Residents"; ls.textContent=`${S.residents.length} people · ${emp} employed`;
+    const rs=[...S.residents].sort((a,b)=>b.money-a.money);
+    el.innerHTML=rs.map(r=>{ const st=stateOf(r);
+      return `<div class="item ${S.selRes===r?'on':''}" data-res="${r.id}">
+        <span class="dot" style="background:${stateColor(st)}"></span>
+        <span class="nm"><b>${r.name}</b><small>${r.jobTitle} · ${st}</small></span>
+        <span class="rt"><b>${money(r.money)}</b><small style="color:var(--muted)">${r.rate?'$'+r.rate+'/hr':'—'}</small></span>
+      </div>`;
+    }).join("");
+  }
+}
+
+function renderDetail(){
+  const cards=document.getElementById("detailCards");
+  if(S.view==="charts"){ chartCv.style.display="block"; cards.style.display="none"; return; }
+  chartCv.style.display="none"; cards.style.display="block";
+  if(S.view==="guide"){ cards.innerHTML=guideHTML(); return; }
+  if(S.view==="businesses"){
+    cards.innerHTML = S.selBiz ? bizDetail(S.selBiz) : hint("Select a business to see its books, staff and inventory.");
+    return;
+  }
+  cards.innerHTML = S.selRes ? resDetail(S.selRes) : hint("Click a home on the map or a resident in the list to track them.");
+}
+function hint(t){ return `<div class="hint">${t}</div>`; }
+function bar(label,val,col){
+  return `<div class="barrow"><span>${label}</span><div class="bar"><i style="width:${clamp(val,0,100)}%;background:${col}"></i></div></div>`;
+}
+function resDetail(r){
+  const st=stateOf(r), col=stateColor(st), ini=r.name.split(" ").map(w=>w[0]).join("");
+  return `<div class="dhead">
+    <div class="avatar" style="background:${r.carColor}">${ini}</div>
+    <div class="who"><div class="nm">${r.name}</div><div class="role">${r.jobTitle} · age ${r.age}</div></div>
+    <button class="trackbtn ${S.track===r?'on':''}" data-track="${r.id}">${S.track===r?'● Tracking':'Track'}</button>
+    <span class="badge" style="border-color:${col};color:${col}">${st}</span>
+  </div>
+  <div class="cards">
+    <div class="scard"><div class="k">Cash</div><div class="v">${money(r.money)}</div></div>
+    <div class="scard"><div class="k">Rate</div><div class="v">${r.rate?'$'+r.rate:'—'}<span style="font-size:11px;color:var(--muted)">${r.rate?'/hr':''}</span></div></div>
+    <div class="scard"><div class="k">Today</div><div class="v">${r.hoursToday}h</div></div>
+    <div class="scard"><div class="k">Lifetime pay</div><div class="v">${money(r.lifetimeEarn)}</div></div>
+  </div>
+  <div class="drow">
+    <div class="field"><div class="k">Current location</div><div class="v">${locOf(r)}</div></div>
+    <div class="field"><div class="k">Destination</div><div class="v">${destOf(r)}</div></div>
+  </div>
+  <div class="drow">
+    <div class="field"><div class="k">Home</div><div class="v">${r.home.label}</div></div>
+    <div class="field"><div class="k">Job</div><div class="v">${r.biz?r.biz.name:'—'}</div></div>
+  </div>
+  <div class="bars">
+    ${bar("Food",r.need.food,"#6fae4f")}
+    ${bar("Goods",r.need.goods,"#5b7fd6")}
+    ${bar("Satisfaction",r.satisfaction,"#e0a13c")}
+  </div>`;
+}
+function bizDetail(b){
+  const prof=b.lastProfit||0, inv=b.inv[b.good], invPct=Math.min(100,inv/b.cap*100);
+  return `<div class="dhead">
+    <div class="avatar" style="background:${b.color}">${b.name[0]}</div>
+    <div class="who"><div class="nm">${b.name}</div><div class="role">${b.role} · sells ${b.good} · ${b.employees.length} staff</div></div>
+    <span class="badge">${b.cash<b.buffer*0.3?'Struggling':'Healthy'}</span>
+  </div>
+  <div class="cards">
+    <div class="scard"><div class="k">Cash</div><div class="v">${money(b.cash)}</div></div>
+    <div class="scard"><div class="k">Revenue</div><div class="v">${money(b.revenueToday)}</div></div>
+    <div class="scard"><div class="k">Expenses</div><div class="v">${money(b.expenseToday)}</div></div>
+    <div class="scard"><div class="k">Profit/yest</div><div class="v ${prof>=0?'pos':'neg'}">${money(prof)}</div></div>
+  </div>
+  <div class="invrow"><span>Wage / worker</span><b>${money(b.wage)}/day</b></div>
+  <div class="invrow"><span>Inventory (${b.good})</span><b>${Math.round(inv)} / ${b.cap}</b></div>
+  <div class="bar" style="height:9px;margin:8px 0"><i style="width:${invPct}%;background:${b.color}"></i></div>
+  <div style="margin-top:10px;font-size:11px;color:var(--muted)">Staff</div>
+  ${b.employees.slice(0,8).map(e=>`<div class="invrow"><span>${e.name}</span><b>${money(e.money)}</b></div>`).join("")}`;
+}
+function guideHTML(){
+  return `<div class="guide">
+  <h4>AIFireCity — how it works</h4>
+  Every system feeds another in a <b>closed economy</b> where money is conserved to the cent.
+  <div style="margin-top:8px"></div>
+  <b>Residents</b> commute by car to <b>jobs</b>, earn wages, pay income tax, then shop for food &amp; goods.<br>
+  <b>Producers</b> (farm, factory) make goods using labor; <b>trucks</b> deliver stock to <b>shops</b>.<br>
+  <b>Shops</b> sell to residents; <b>prices</b> rise on shortages, fall on surplus.<br>
+  <b>City Hall</b> recycles income tax into <b>pensions &amp; welfare</b> for non-workers.<br>
+  <b>GDP</b> sums value added; the <b>Charts</b> tab tracks GDP, money supply and prices.
+  <div style="margin-top:10px;color:var(--muted)">Tip: click any home to <b>track</b> a resident and watch them drive across town. Drag to pan, wheel to zoom.</div>
+  </div>`;
+}
+
+/* =====================================================================
+   INTERACTION
+   ===================================================================== */
+function buildingAt(px,py){
+  for(const b of S.buildings){
+    const x0=wx(b.plot.x0), y0=wy(b.plot.y0), x1=wx(b.plot.x1), y1=wy(b.plot.y1);
+    if(px>=x0&&px<=x1&&py>=y0&&py<=y1) return b;
+  }
+  return null;
+}
+function selectBuilding(b){
+  if(b.business){ S.selBiz=b.business; S.view="businesses"; setTabs(); }
+  else if(b.residents.length){ S.selRes=b.residents[0]; S.track=b.residents[0]; S.view="residents"; setTabs(); }
+}
+function setTabs(){
+  document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("on", t.dataset.view===S.view));
+  if(S.view==="charts"){ layoutCharts(); }
+}
+// map pointer: pan / zoom / click
+let drag=null;
+map.addEventListener("mousedown",e=>{ drag={x:e.clientX,y:e.clientY,ox:cam.ox,oy:cam.oy,moved:0}; map.classList.add("drag"); });
+window.addEventListener("mousemove",e=>{
+  if(!drag) return;
+  const dx=e.clientX-drag.x, dy=e.clientY-drag.y;
+  drag.moved+=Math.abs(dx)+Math.abs(dy);
+  cam.ox=drag.ox+dx; cam.oy=drag.oy+dy;
+});
+window.addEventListener("mouseup",e=>{
+  if(!drag){ return; }
+  if(drag.moved<4){
+    const r=map.getBoundingClientRect();
+    const b=buildingAt(e.clientX-r.left, e.clientY-r.top);
+    if(b) selectBuilding(b);
+  }
+  drag=null; map.classList.remove("drag");
+});
+map.addEventListener("wheel",e=>{
+  e.preventDefault();
+  const r=map.getBoundingClientRect(), mxp=e.clientX-r.left, myp=e.clientY-r.top;
+  const f=e.deltaY<0?1.12:1/1.12, ns=clamp(cam.scale*f,0.35,4.5), k=ns/cam.scale;
+  cam.ox=mxp-(mxp-cam.ox)*k; cam.oy=myp-(myp-cam.oy)*k; cam.scale=ns;
+},{passive:false});
+document.getElementById("b-reset").addEventListener("click",fitView);
+
+// list
+document.getElementById("list").addEventListener("click",e=>{
+  const bi=e.target.closest("[data-biz]"), re=e.target.closest("[data-res]");
+  if(bi){ S.selBiz=S.businesses[+bi.dataset.biz]; }
+  if(re){ const r=S.residents[+re.dataset.res]; S.selRes=r; S.track=r; }
+});
+// detail track button
+document.getElementById("detailCards").addEventListener("click",e=>{
+  const tb=e.target.closest("[data-track]");
+  if(tb){ const r=S.residents[+tb.dataset.track]; S.track=(S.track===r)?null:r; }
+});
+// tabs
+document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{
+  S.view=t.dataset.view; setTabs();
+}));
+// controls
+document.getElementById("b-pause").addEventListener("click",function(){
+  S.running=!S.running; this.textContent=S.running?"⏸ Pause":"▶ Play";
+});
+document.getElementById("b-regen").addEventListener("click",()=>regenerate());
+const spd=document.getElementById("spd");
+spd.addEventListener("input",function(){ S.speed=+this.value;
+  document.getElementById("spdval").textContent=(+this.value).toFixed(1)+"×"; });
+function bindLayer(id,key){ const el=document.getElementById(id);
+  el.addEventListener("change",function(){ S.layers[key]=this.checked; }); }
+bindLayer("ly-roads","roads"); bindLayer("ly-buildings","buildings"); bindLayer("ly-life","life");
+window.addEventListener("resize",()=>{ layoutMap(true); if(S.view==="charts") layoutCharts(); });
+
+/* =====================================================================
+   BOOT / REGENERATE / LOOP
+   ===================================================================== */
+function boot(){
+  genCity(); genResidents(); genTrucks();
+  S.moneyTotal=totalMoney();
+  for(const b of S.businesses) b.lastProfit=0;
+  S.selRes=S.residents[0]; S.track=S.residents[0];          // populate tracker on load
+  logEvt(`City founded — ${S.residents.length} residents, ${S.businesses.length} businesses, `+
+         `${S.residents.filter(r=>r.hasCar).length} cars, ${S.trucks.length} trucks.`);
+  layoutMap(true); layoutCharts();
+}
+function regenerate(){
+  _seed=(Math.floor(Math.random()*1e9))>>>0;
+  S.nodes.length=0; S.adj.length=0; S.buildings.length=0; S.businesses.length=0;
+  S.residents.length=0; S.vehicles.length=0; S.trucks.length=0; S.orders.length=0;
+  S.log.length=0; S.hist.gdp.length=0; S.hist.money.length=0; S.hist.food.length=0; S.hist.goods.length=0;
+  S.absMin=6*60; S.gov.cash=0; lastGdpAccum=0;
+  S.goods.food.retail=8.5; S.goods.goods.retail=13.0;
+  S.eco={ gdpAccum:0, gdpToday:0, produce:{food:0,goods:0}, consume:{food:0,goods:0} };
+  S.selRes=null; S.selBiz=null; S.track=null;
+  boot();
+}
+let last=performance.now(), hudAcc=0, chartAcc=0;
+function frame(now){
+  let dt=(now-last)/1000; last=now; if(dt>0.1) dt=0.1;
+  stepSim(dt);
+  renderMap();
+  hudAcc+=dt; if(hudAcc>0.2){ renderHUD(); hudAcc=0; }
+  chartAcc+=dt; if(chartAcc>0.5){ renderCharts(); chartAcc=0; }
+  requestAnimationFrame(frame);
+}
+boot();
+setTabs(); renderHUD();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
